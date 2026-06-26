@@ -61,8 +61,8 @@ Plateforme de vente en ligne et gestion de stock pour la quincaillerie professio
 ### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/TON_COMPTE/React-Inventory-Management-System.git
-cd React-Inventory-Management-System
+git clone  https://github.com/houssem9140/QuinStock.git
+
 ```
 
 ### 2. Backend
