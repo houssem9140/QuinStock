@@ -1,90 +1,68 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import AuthContext from "../AuthContext";
+
+const adminLinks = [
+  { label: "Dashboard", href: "/admin", code: "01" },
+  { label: "Catalogue", href: "/admin/inventory", code: "02" },
+  { label: "Commandes", href: "/admin/purchase-details", code: "03" },
+  { label: "Devis", href: "/admin/sales", code: "04" },
+  { label: "Clients", href: "/admin/manage-store", code: "05" },
+];
+
+const clientLinks = [
+  { label: "Accueil", href: "/client", code: "01" },
+  { label: "Catalogue", href: "/client/catalogue", code: "02" },
+  { label: "Panier", href: "/client/cart", code: "03" },
+  { label: "Mes devis", href: "/client/devis", code: "04" },
+  { label: "Historique achats", href: "/client/achats", code: "05" },
+];
 
 function SideMenu() {
-  const localStorageData = JSON.parse(localStorage.getItem("user"));
+  const authContext = useContext(AuthContext);
+  const location = useLocation();
+  const currentUser = authContext.currentUser || {};
+  const links = authContext.isAdmin ? adminLinks : clientLinks;
+  const displayName =
+    [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
+    currentUser.companyName ||
+    "Client Pro";
 
   return (
-    <div className="h-full flex-col justify-between  bg-white hidden lg:flex ">
-      <div className="px-4 py-6">
-        <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
-          <Link
-            to="/"
-            className="flex items-center gap-2 rounded-lg hover:bg-gray-100 px-4 py-2 text-gray-700"
-          >
-            <img
-              alt="dashboard-icon"
-              src={require("../assets/dashboard-icon.png")}
-            />
-            <span className="text-sm font-medium"> Dashboard </span>
-          </Link>
+    <div className="flex h-full w-full flex-col justify-between border-r border-white/10 bg-surface-container-lowest px-3 py-6">
+      <nav className="flex flex-col gap-2">
+        <p className="mb-3 px-3 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+          Navigation
+        </p>
+        {links.map((item) => {
+          const active = location.pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={`group rounded border px-3 py-3 transition ${
+                active
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-transparent text-on-surface-variant hover:border-white/10 hover:bg-surface-container hover:text-white"
+              }`}
+            >
+              <span className="mb-2 block font-mono text-[10px] font-bold tracking-widest opacity-70">
+                {item.code}
+              </span>
+              <span className="text-sm font-bold">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-          <details className="group [&_summary::-webkit-details-marker]:hidden">
-            <summary className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-              <Link to="/inventory">
-                <div className="flex items-center gap-2">
-                  <img
-                    alt="inventory-icon"
-                    src={require("../assets/inventory-icon.png")}
-                  />
-                  <span className="text-sm font-medium"> Inventory </span>
-                </div>
-              </Link>
-            </summary>
-          </details>
-
-          <Link
-            to="/purchase-details"
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-          >
-            <img
-              alt="purchase-icon"
-              src={require("../assets/supplier-icon.png")}
-            />
-            <span className="text-sm font-medium"> Purchase Details</span>
-          </Link>
-          <Link
-            to="/sales"
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-          >
-            <img alt="sale-icon" src={require("../assets/supplier-icon.png")} />
-            <span className="text-sm font-medium"> Sales</span>
-          </Link>
-
-          <details className="group [&_summary::-webkit-details-marker]:hidden">
-            <summary className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-              <Link to="/manage-store">
-                <div className="flex items-center gap-2">
-                  <img
-                    alt="store-icon"
-                    src={require("../assets/order-icon.png")}
-                  />
-                  <span className="text-sm font-medium"> Manage Store </span>
-                </div>
-              </Link>
-            </summary>
-          </details>
-        </nav>
-      </div>
-
-      <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-        <div className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
-          <img
-            alt="Profile"
-            src={localStorageData.imageUrl}
-            className="h-10 w-10 rounded-full object-cover"
-          />
-
-          <div>
-            <p className="text-xs">
-              <strong className="block font-medium">
-                {localStorageData.firstName + " " + localStorageData.lastName}
-              </strong>
-
-              <span> {localStorageData.email} </span>
-            </p>
-          </div>
+      <div className="rounded border border-white/10 bg-surface-container p-4">
+        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded bg-primary font-black text-on-primary">
+          {displayName.slice(0, 1).toUpperCase()}
         </div>
+        <p className="truncate text-sm font-bold text-white">{displayName}</p>
+        <p className="mt-1 truncate font-mono text-[10px] text-on-surface-variant">
+          {currentUser.email}
+        </p>
       </div>
     </div>
   );

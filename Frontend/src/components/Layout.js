@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Outlet } from "react-router-dom";
+import AuthContext from "../AuthContext";
 import Header from "./Header";
 import SideMenu from "./SideMenu";
 
 function Layout() {
+  const authContext = useContext(AuthContext);
+  const isClient = !authContext.isAdmin;
+
   return (
-    <>
-      <div className="md:h-16">
-        <Header />
-      </div>
-      <div className="grid grid-cols-12 bg-gray-100 items-baseline">
-        <div className="col-span-2 h-screen sticky top-0 hidden lg:flex">
-          <SideMenu />
+    <div className="min-h-screen bg-surface text-on-surface">
+      <Header />
+      <div className={isClient ? "bg-surface" : "bg-surface-container-lowest"}>
+        <div className="grid min-h-[calc(100vh-72px)] grid-cols-12">
+          <aside className="sticky top-[72px] hidden h-[calc(100vh-72px)] lg:col-span-2 lg:flex">
+            <SideMenu />
+          </aside>
+          <Outlet />
         </div>
-        <Outlet />
       </div>
-    </>
+    </div>
   );
 }
 

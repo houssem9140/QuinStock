@@ -1,295 +1,102 @@
-import React, { useContext, useEffect, useState } from "react";
-import Chart from "react-apexcharts";
+import React, { useContext, useEffect } from "react";
 import AuthContext from "../AuthContext";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { categories, products } from "../data/catalogue";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-export const data = {
-  labels: ["Apple", "Knorr", "Shoop", "Green", "Purple", "Orange"],
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [0, 1, 5, 8, 9, 15],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
+const recentOrders = [
+  { id: "CMD-2401", client: "Client Demo", status: "A traiter", amount: "428,30 EUR" },
+  { id: "CMD-2402", client: "Batipro Nord", status: "Preparation", amount: "1 284,90 EUR" },
+  { id: "CMD-2403", client: "Atelier Central", status: "Devis envoye", amount: "739,10 EUR" },
+];
 
 function Dashboard() {
-  const [saleAmount, setSaleAmount] = useState("");
-  const [purchaseAmount, setPurchaseAmount] = useState("");
-  const [stores, setStores] = useState([]);
-  const [products, setProducts] = useState([]);
-
-  const [chart, setChart] = useState({
-    options: {
-      chart: {
-        id: "basic-bar",
-      },
-      xaxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-      },
-    },
-    series: [
-      {
-        name: "series",
-        data: [10, 20, 40, 50, 60, 20, 10, 35, 45, 70, 25, 70],
-      },
-    ],
-  });
-
-  // Update Chart Data
-  const updateChartData = (salesData) => {
-    setChart({
-      ...chart,
-      series: [
-        {
-          name: "Monthly Sales Amount",
-          data: [...salesData],
-        },
-      ],
-    });
-  };
-
   const authContext = useContext(AuthContext);
+  const lowStock = products.filter((product) => product.stock < 35);
+  const totalStock = products.reduce((sum, product) => sum + product.stock, 0);
 
   useEffect(() => {
-    fetchTotalSaleAmount();
-    fetchTotalPurchaseAmount();
-    fetchStoresData();
-    fetchProductsData();
-    fetchMonthlySalesData();
+    document.title = "Dashboard Admin | QuinStock";
   }, []);
 
-  // Fetching total sales amount
-  const fetchTotalSaleAmount = () => {
-    fetch(
-      `http://localhost:4000/api/sales/get/${authContext.user}/totalsaleamount`
-    )
-      .then((response) => response.json())
-      .then((datas) => setSaleAmount(datas.totalSaleAmount));
-  };
+  const adminName =
+    [authContext.currentUser?.firstName, authContext.currentUser?.lastName]
+      .filter(Boolean)
+      .join(" ") || "Administrateur";
 
-  // Fetching total purchase amount
-  const fetchTotalPurchaseAmount = () => {
-    fetch(
-      `http://localhost:4000/api/purchase/get/${authContext.user}/totalpurchaseamount`
-    )
-      .then((response) => response.json())
-      .then((datas) => setPurchaseAmount(datas.totalPurchaseAmount));
-  };
-
-  // Fetching all stores data
-  const fetchStoresData = () => {
-    fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((datas) => setStores(datas));
-  };
-
-  // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((datas) => setProducts(datas))
-      .catch((err) => console.log(err));
-  };
-
-  // Fetching Monthly Sales
-  const fetchMonthlySalesData = () => {
-    fetch(`http://localhost:4000/api/sales/getmonthly`)
-      .then((response) => response.json())
-      .then((datas) => updateChartData(datas.salesAmount))
-      .catch((err) => console.log(err));
-  };
+  const kpis = [
+    { label: "Produits", value: products.length, detail: `${categories.length} categories actives` },
+    { label: "Stock total", value: totalStock, detail: "Unites demo disponibles" },
+    { label: "Stock faible", value: lowStock.length, detail: "Articles a surveiller" },
+    { label: "Devis", value: "24h", detail: "Delai moyen de traitement" },
+  ];
 
   return (
-    <>
-      <div className="grid grid-cols-1 col-span-12 lg:col-span-10 gap-6 md:grid-cols-3 lg:grid-cols-4  p-4 ">
-        <article className="flex flex-col gap-4 rounded-lg border  border-gray-100 bg-white p-6  ">
-          <div className="inline-flex gap-2 self-end rounded bg-green-100 p-1 text-green-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-              />
-            </svg>
-
-            <span className="text-xs font-medium"> 67.81% </span>
-          </div>
-
-          <div>
-            <strong className="block text-sm font-medium text-gray-500">
-              Sales
-            </strong>
-
-            <p>
-              <span className="text-2xl font-medium text-gray-900">
-                ${saleAmount}
-              </span>
-
-              <span className="text-xs text-gray-500"> from $240.94 </span>
+    <main className="col-span-12 bg-surface px-4 py-8 text-on-surface md:px-8 lg:col-span-10">
+      <div className="mx-auto max-w-[1500px]">
+        <section className="relative overflow-hidden rounded-xl border border-white/10 bg-surface-container-low p-8 md:p-10">
+          <div className="absolute right-0 top-0 hidden h-full w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(212,130,10,0.24),transparent_45%)] lg:block" />
+          <div className="relative">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-primary">Admin Console</p>
+            <h1 className="mt-4 font-display text-6xl leading-none tracking-wide text-off-white md:text-8xl">
+              PILOTAGE<br /><span className="text-primary">QUINSTOCK</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-on-surface-variant">
+              Bonjour {adminName}. Suivez les commandes, le stock, les clients et les demandes de devis depuis ce tableau de bord.
             </p>
           </div>
-        </article>
+        </section>
 
-        <article className="flex flex-col  gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
-          <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
+        <section className="mt-6 grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 md:grid-cols-4">
+          {kpis.map((kpi) => (
+            <article key={kpi.label} className="bg-surface-container p-6">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-steel">{kpi.label}</p>
+              <p className="mt-4 font-display text-6xl leading-none text-primary">{kpi.value}</p>
+              <p className="mt-3 text-sm text-on-surface-variant">{kpi.detail}</p>
+            </article>
+          ))}
+        </section>
 
-            <span className="text-xs font-medium"> 67.81% </span>
+        <section className="mt-8 grid gap-8 xl:grid-cols-12">
+          <div className="xl:col-span-8">
+            <div className="mb-4 flex items-end justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">Commandes</p>
+                <h2 className="mt-2 font-display text-5xl tracking-wide text-white">Dernieres activites</h2>
+              </div>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-white/10 bg-surface-container">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="grid gap-3 border-b border-white/5 p-5 last:border-b-0 md:grid-cols-[1fr_1fr_1fr_auto] md:items-center">
+                  <span className="font-mono text-xs font-bold text-primary">{order.id}</span>
+                  <span className="text-sm font-bold text-white">{order.client}</span>
+                  <span className="text-sm text-on-surface-variant">{order.status}</span>
+                  <span className="font-mono text-sm font-bold text-white">{order.amount}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <strong className="block text-sm font-medium text-gray-500">
-              Purchase
-            </strong>
-
-            <p>
-              <span className="text-2xl font-medium text-gray-900">
-                {" "}
-                ${purchaseAmount}{" "}
-              </span>
-
-              <span className="text-xs text-gray-500"> from $404.32 </span>
-            </p>
-          </div>
-        </article>
-        <article className="flex flex-col   gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
-          <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
-
-            <span className="text-xs font-medium"> 67.81% </span>
-          </div>
-
-          <div>
-            <strong className="block text-sm font-medium text-gray-500">
-              Total Products
-            </strong>
-
-            <p>
-              <span className="text-2xl font-medium text-gray-900">
-                {" "}
-                {products.length}{" "}
-              </span>
-
-              {/* <span className="text-xs text-gray-500"> from $404.32 </span> */}
-            </p>
-          </div>
-        </article>
-        <article className="flex flex-col   gap-4 rounded-lg border border-gray-100 bg-white p-6 ">
-          <div className="inline-flex gap-2 self-end rounded bg-red-100 p-1 text-red-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-              />
-            </svg>
-
-            <span className="text-xs font-medium"> 67.81% </span>
-          </div>
-
-          <div>
-            <strong className="block text-sm font-medium text-gray-500">
-              Total Stores
-            </strong>
-
-            <p>
-              <span className="text-2xl font-medium text-gray-900">
-                {" "}
-                {stores.length}{" "}
-              </span>
-
-              {/* <span className="text-xs text-gray-500"> from 0 </span> */}
-            </p>
-          </div>
-        </article>
-        <div className="flex justify-around bg-white rounded-lg py-8 col-span-full justify-center">
-          <div>
-            <Chart
-              options={chart.options}
-              series={chart.series}
-              type="bar"
-              width="500"
-            />
-          </div>
-          <div>
-            <Doughnut data={data} />
-          </div>
-        </div>
+          <aside className="xl:col-span-4">
+            <div className="rounded-xl border border-white/10 bg-surface-container p-6">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-primary">Stock faible</p>
+              <h2 className="mt-2 font-display text-5xl tracking-wide text-white">A recharger</h2>
+              <div className="mt-5 space-y-3">
+                {lowStock.slice(0, 5).map((product) => (
+                  <div key={product.id} className="rounded border border-white/10 bg-surface-container-low p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-white">{product.name}</p>
+                        <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">{product.brand}</p>
+                      </div>
+                      <span className="font-display text-3xl text-primary">{product.stock}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </section>
       </div>
-    </>
+    </main>
   );
 }
 

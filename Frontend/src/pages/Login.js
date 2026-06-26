@@ -1,99 +1,118 @@
-// import { LockClosedIcon } from "@heroicons/react/20/solid";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
+import { login } from "../api/authApi";
+import heroImage from "../assets/b2b/hardware-hero.jpg";
 
 function Login() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    document.title = "Connexion | QuinStock";
+  }, []);
 
-  const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleInputChange = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
   };
 
-  const authCheck = () => {
-    setTimeout(() => {
-      fetch("http://localhost:4000/api/login")
-        .then((response) => response.json())
-        .then((data) => {
-          alert("Successfully Login");
-          localStorage.setItem("user", JSON.stringify(data));
-          authContext.signin(data._id, () => {
-            navigate("/");
-          });
-        })
-        .catch((err) => {
-          alert("Wrong credentials, Try again")
-          console.log(err);
-        });
-    }, 3000);
-  };
+  const loginUser = async (event) => {
+    event.preventDefault();
+    setError("");
 
-  const loginUser = (e) => {
-    // Cannot send empty data
-    if (form.email === "" || form.password === "") {
-      alert("To login user, enter details to proceed...");
-    } else {
-      fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(form),
-      })
-        .then((result) => {
-          console.log("User login", result);
-        })
-        .catch((error) => {
-          console.log("Something went wrong ", error);
-        });
+    if (!form.email || !form.password) {
+      setError("Veuillez saisir votre email et votre mot de passe.");
+      return;
     }
-    authCheck();
+
+    setIsSubmitting(true);
+
+    try {
+      const data = await login(form);
+      const redirectPath = data.user?.role === "admin" ? "/admin" : "/";
+
+      authContext.signin(data, () => {
+        navigate(redirectPath);
+      });
+    } catch (loginError) {
+      setError(loginError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  
   return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-screen  items-center place-items-center">
-        <div className="flex justify-center">
-          <img src={require("../assets/signup.jpg")} alt="" />
-        </div>
-        <div className="w-full max-w-md space-y-8 p-10 rounded-lg">
-          <div>
-            <img
-              className="mx-auto h-12 w-auto"
-              src={require("../assets/logo.png")}
-              alt="Your Company"
-            />
-            <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-              Signin to your account
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Or
-              <span
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                start your 14-day free trial
-              </span>
-            </p>
+    <main className="min-h-screen bg-surface text-on-surface">
+      <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-surface/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-4 md:px-16">
+          <Link to="/" className="flex items-center gap-3">
+            <span className="h-3 w-3 rounded-full bg-primary shadow-[0_0_24px_rgba(170,199,255,0.65)]" />
+            <span className="font-display text-3xl tracking-[0.12em] text-white md:text-4xl">
+              QUIN<span className="text-primary">STOCK</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/catalogue" className="hidden rounded border border-white/10 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-on-surface-variant transition hover:text-primary sm:block">
+              Catalogue
+            </Link>
+            <Link to="/register" className="rounded bg-primary px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-primary transition hover:bg-primary-container">
+              Signup
+            </Link>
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            {/* <input type="hidden" name="remember" defaultValue="true" /> */}
-            <div className="-space-y-px rounded-md shadow-sm">
+        </div>
+      </header>
+
+      <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-10 pt-28 md:px-16">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-35" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/70" />
+        </div>
+
+        <div className="relative z-10 mx-auto grid w-full max-w-[1180px] gap-8 lg:grid-cols-[1fr_480px] lg:items-center">
+          <div className="hidden lg:block">
+            <span className="mb-6 inline-block rounded-sm border border-primary/20 bg-primary/10 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
+              Acces securise B2B
+            </span>
+            <h1 className="max-w-2xl text-6xl font-black leading-none tracking-tight text-white">
+              Connectez votre equipe a QuinStock.
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-8 text-on-surface-variant">
+              Clients professionnels reviennent sur l'accueil public avec acces a leur espace. Les administrateurs sont envoyes vers le dashboard.
+            </p>
+            <div className="mt-10 grid max-w-xl grid-cols-3 gap-4">
+              {[
+                ["JWT", "Session securisee"],
+                ["B2B", "Catalogue pro"],
+                ["24H", "Devis rapide"],
+              ].map(([value, label]) => (
+                <div key={value} className="rounded border border-white/10 bg-surface-container/80 p-4">
+                  <p className="font-mono text-2xl font-black text-white">{value}</p>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-primary">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-surface-container/95 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8">
+            <div className="mb-8">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">Login Portal</p>
+              <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Connexion</h2>
+              <p className="mt-2 text-sm leading-6 text-on-surface-variant">
+                Entrez vos identifiants pour acceder a votre espace client ou admin.
+              </p>
+            </div>
+
+            <form className="space-y-5" onSubmit={loginUser}>
               <div>
-                <label htmlFor="email-address" className="sr-only">
-                  Email address
+                <label htmlFor="email-address" className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+                  Email professionnel
                 </label>
                 <input
                   id="email-address"
@@ -101,15 +120,16 @@ function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="relative block w-full rounded-t-md border-0 py-1.5 px-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Email address"
+                  className="block w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
+                  placeholder="client.demo@quincaillerie.test"
                   value={form.email}
                   onChange={handleInputChange}
                 />
               </div>
+
               <div>
-                <label htmlFor="password" className="sr-only">
-                  Password
+                <label htmlFor="password" className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+                  Mot de passe
                 </label>
                 <input
                   id="password"
@@ -117,67 +137,57 @@ function Login() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="relative block w-full rounded-b-md border-0 py-1.5 px-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Password"
+                  className="block w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
+                  placeholder="Votre mot de passe"
                   value={form.password}
                   onChange={handleInputChange}
                 />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Remember me
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <label htmlFor="remember-me" className="flex items-center gap-2 text-on-surface-variant">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-outline-variant bg-surface-container-low text-primary focus:ring-primary"
+                  />
+                  Se souvenir de moi
                 </label>
+                <span className="text-primary">Mot de passe oublie ?</span>
               </div>
 
-              <div className="text-sm">
-                <span
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot your password?
-                </span>
-              </div>
-            </div>
+              {error && (
+                <p className="rounded border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+                  {error}
+                </p>
+              )}
 
-            <div>
               <button
                 type="submit"
-                className="group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={loginUser}
+                className="flex w-full items-center justify-center rounded bg-primary px-6 py-4 text-xs font-black uppercase tracking-widest text-on-primary transition hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSubmitting}
               >
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  {/* <LockClosedIcon
-                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                    aria-hidden="true"
-                  /> */}
-                </span>
-                Sign in
+                {isSubmitting ? "Connexion..." : "Se connecter"}
               </button>
-              <p className="mt-2 text-center text-sm text-gray-600">
-                Or{" "}
-                <span
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  Don't Have an Account, Please{" "}
-                  <Link to="/register"> Register now </Link>
-                </span>
-              </p>
+            </form>
+
+            <div className="mt-6 rounded border border-white/10 bg-surface-container-low p-4 font-mono text-[11px] text-on-surface-variant">
+              <p className="mb-2 font-bold uppercase tracking-widest text-primary">Compte demo client</p>
+              <p>client.demo@quincaillerie.test</p>
+              <p>client123</p>
             </div>
-          </form>
+
+            <p className="mt-6 text-center text-sm text-on-surface-variant">
+              Nouveau client pro ?{" "}
+              <Link to="/register" className="font-bold text-primary hover:underline">
+                Creer un compte
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
-    </>
+      </section>
+    </main>
   );
 }
 

@@ -1,18 +1,25 @@
 import { Fragment, useContext } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, LanguageIcon, ShoppingCartIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../AuthContext";
-import { Link } from "react-router-dom";
+import CartContext from "../CartContext";
+import LanguageContext from "../LanguageContext";
 
-const navigation = [
-  { name: "Dashboard", href: "/", current: true },
-  { name: "Inventory", href: "/inventory", current: false },
-  { name: "Purchase Details", href: "/purchase-details", current: false },
-  { name: "Sales", href: "/sales", current: false },
-  { name: "Manage Store", href: "/manage-store", current: false },
+const adminNavigation = [
+  { name: "Dashboard", href: "/admin" },
+  { name: "Catalogue", href: "/admin/inventory" },
+  { name: "Commandes", href: "/admin/purchase-details" },
+  { name: "Devis", href: "/admin/sales" },
+  { name: "Clients", href: "/admin/manage-store" },
 ];
 
-const userNavigation = [{ name: "Sign out", href: "./login" }];
+const clientNavigation = [
+  { name: "Accueil", href: "/client" },
+  { name: "Catalogue", href: "/client/catalogue" },
+  { name: "Mes devis", href: "/client/devis" },
+  { name: "Achats", href: "/client/achats" },
+];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -20,171 +27,165 @@ function classNames(...classes) {
 
 export default function Header() {
   const authContext = useContext(AuthContext);
-  const localStorageData = JSON.parse(localStorage.getItem("user"));
+  const cart = useContext(CartContext);
+  const { language, t, toggleLanguage } = useContext(LanguageContext);
+  const location = useLocation();
+  const currentUser = authContext.currentUser || {};
+  const menuItems = authContext.isAdmin ? adminNavigation : clientNavigation;
+  const displayName =
+    [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
+    currentUser.companyName ||
+    "Compte pro";
+
   return (
-    <>
-      <div className="min-h-full">
-        <Disclosure as="nav" className="bg-gray-800">
-          {({ open }) => (
-            <>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div className="flex justify-center items-center gap-2">
-                        <img
-                          className="h-8 w-8"
-                          src={require("../assets/logo.png")}
-                          alt="Inventory Management System"
-                        />
-                        <span className="font-bold text-white italic">
-                          Inventory Management
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block">
-                    <div className="ml-4 flex items-center md:ml-6">
-                      <button
-                        type="button"
-                        className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-
-                      {/* Profile dropdown */}
-                      <Menu as="div" className="relative ml-3">
-                        <div>
-                          <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                            <span className="sr-only">Open user menu</span>
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={localStorageData.imageUrl}
-                              alt="profile"
-                            />
-                          </Menu.Button>
-                        </div>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {userNavigation.map((item) => (
-                              <Menu.Item key={item.name}>
-                                {({ active }) => (
-                                  <Link
-                                    to={item.href}
-                                    className={classNames(
-                                      active ? "bg-gray-100" : "",
-                                      "block px-4 py-2 text-sm text-gray-700"
-                                    )}
-                                  >
-                                    <span onClick={() => authContext.signout()}>
-                                      {item.name}{" "}
-                                    </span>
-                                  </Link>
-                                )}
-                              </Menu.Item>
-                            ))}
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </div>
-                  </div>
-                  <div className="-mr-2 flex md:hidden">
-                    {/* Mobile menu button */}
-                    <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="sr-only">Open main menu</span>
-                      {open ? (
-                        <XMarkIcon
-                          className="block h-6 w-6"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <Bars3Icon
-                          className="block h-6 w-6"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </Disclosure.Button>
-                  </div>
-                </div>
+    <Disclosure as="header" className="sticky top-0 z-50 border-b border-white/10 bg-surface/95 backdrop-blur-xl">
+      {({ open }) => (
+        <>
+          <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-4 md:px-8">
+            <Link to={authContext.isAdmin ? "/admin" : "/client"} className="flex items-center gap-3">
+              <span className="h-3 w-3 rounded-full bg-primary shadow-[0_0_24px_rgba(170,199,255,0.65)]" />
+              <div className="leading-none">
+                <span className="block text-sm font-black tracking-tight text-white md:text-lg">
+                  QUIN<span className="text-primary">STOCK</span>
+                </span>
+                <span className="hidden font-mono text-[10px] uppercase tracking-widest text-primary md:block">
+                  {authContext.isAdmin ? "ADMIN_CONSOLE" : "CLIENT_PORTAL"}
+                </span>
               </div>
+            </Link>
 
-              <Disclosure.Panel className="md:hidden">
-                <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                  {navigation.map((item) => (
-                    <Link to={item.href} key={item.name}>
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        // href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "block rounded-md px-3 py-2 text-base font-medium"
-                        )}
-                        aria-current={item.current ? "page" : undefined}
-                      >
-                        {item.name}
-                      </Disclosure.Button>
-                    </Link>
-                  ))}
-                </div>
-                <div className="border-t border-gray-700 pt-4 pb-3">
-                  <div className="flex items-center px-5">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={localStorageData.imageUrl}
-                        alt="profile"
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">
-                        {localStorageData.firstName +
-                          " " +
-                          localStorageData.lastName}
-                      </div>
-                      <div className="text-sm font-medium leading-none text-gray-400">
-                        {localStorageData.email}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    {userNavigation.map((item) => (
-                      <Disclosure.Button
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        <span onClick={() => authContext.signout()}>
-                          {item.name}{" "}
-                        </span>
-                      </Disclosure.Button>
-                    ))}
-                  </div>
-                </div>
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
-      </div>
-    </>
+            <nav className="hidden items-center gap-1 lg:flex">
+              {menuItems.map((item) => {
+                const active = location.pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={classNames(
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-transparent text-on-surface-variant hover:border-white/10 hover:bg-surface-container hover:text-white",
+                      "rounded border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="hidden items-center gap-3 md:flex">
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition hover:border-primary/40 hover:text-primary"
+                type="button"
+                title={t.language}
+              >
+                <LanguageIcon className="h-4 w-4" />
+                {language.toUpperCase()}
+              </button>
+              <Link
+                to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
+                className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-primary transition hover:border-primary/40"
+              >
+                <ShoppingCartIcon className="h-4 w-4" />
+                <span>{cart.cartCount}</span>
+              </Link>
+              <button
+                type="button"
+                className="rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant transition hover:text-primary"
+              >
+                <span className="sr-only">Notifications</span>
+                <BellIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <Menu as="div" className="relative">
+                <Menu.Button className="flex items-center gap-3 rounded border border-white/10 bg-surface-container px-3 py-2 text-left transition hover:border-primary/40">
+                  <span className="flex h-8 w-8 items-center justify-center rounded bg-primary text-xs font-black text-on-primary">
+                    {displayName.slice(0, 1).toUpperCase()}
+                  </span>
+                  <span className="hidden leading-tight lg:block">
+                    <span className="block text-xs font-bold text-white">{displayName}</span>
+                    <span className="block max-w-[180px] truncate font-mono text-[10px] text-on-surface-variant">
+                      {currentUser.email}
+                    </span>
+                  </span>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded border border-white/10 bg-surface-container-high py-1 shadow-2xl focus:outline-none">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          to="/login"
+                          onClick={() => authContext.signout()}
+                          className={classNames(
+                            active ? "bg-surface-container-highest text-white" : "text-on-surface-variant",
+                            "block px-4 py-3 text-sm"
+                          )}
+                        >
+                          Deconnexion
+                        </Link>
+                      )}
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+
+            <Disclosure.Button className="inline-flex items-center justify-center rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant hover:text-primary md:hidden">
+              <span className="sr-only">Menu</span>
+              {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+            </Disclosure.Button>
+          </div>
+
+          <Disclosure.Panel className="border-t border-white/10 bg-surface-container md:hidden">
+            <div className="space-y-1 px-4 py-4">
+              {menuItems.map((item) => (
+                <Disclosure.Button
+                  key={item.href}
+                  as={Link}
+                  to={item.href}
+                  className="block rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant"
+                >
+                  {item.name}
+                </Disclosure.Button>
+              ))}
+              <Disclosure.Button
+                as="button"
+                onClick={toggleLanguage}
+                className="flex w-full items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant"
+              >
+                <LanguageIcon className="h-5 w-5" />
+                {t.language}: {language.toUpperCase()}
+              </Disclosure.Button>
+              <Disclosure.Button
+                as={Link}
+                to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
+                className="flex items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-primary"
+              >
+                <ShoppingCartIcon className="h-5 w-5" />
+                Panier ({cart.cartCount})
+              </Disclosure.Button>
+              <Disclosure.Button
+                as={Link}
+                to="/login"
+                onClick={() => authContext.signout()}
+                className="block rounded border border-white/10 px-4 py-3 text-sm font-bold text-primary"
+              >
+                Deconnexion
+              </Disclosure.Button>
+            </div>
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
   );
 }

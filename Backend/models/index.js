@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
-const uri = "mongodb+srv://adminhamza:adminhamza123&@cluster0.pzcviot.mongodb.net/InventoryManagementApp?retryWrites=true&w=majority";
 
+async function connectDatabase() {
+  const mongoUri = process.env.MONGO_URI;
 
-function main() {
-    mongoose.connect(uri).then(() => {
-        console.log("Succesfull")
-    
-    }).catch((err) => {
-        console.log("Error: ", err)
-    })
+  if (!mongoUri) {
+    throw new Error("MONGO_URI is missing. Add it to Backend/.env");
+  }
+
+  await mongoose.connect(mongoUri);
+  console.log("MongoDB connected");
 }
 
-module.exports = { main };
+module.exports = { connectDatabase };

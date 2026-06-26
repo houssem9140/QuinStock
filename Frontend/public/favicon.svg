@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">QuinStock favicon</title>
+  <desc id="desc">Boutique de quincaillerie avec une cle mecanique</desc>
+  <rect width="128" height="128" rx="28" fill="#1C1C1E"/>
+  <circle cx="64" cy="64" r="48" fill="#F5F4F0" opacity="0.08"/>
+  <path d="M23 61h82v49H23z" fill="#F5F4F0"/>
+  <path d="M28 65h72v41H28z" fill="#2A1506"/>
+  <path d="M33 70h22v30H33z" fill="#D4820A"/>
+  <path d="M62 70h33v30H62z" fill="#F5F4F0"/>
+  <path d="M20 54h88l-8 17H28z" fill="#D4820A"/>
+  <path d="M27 54h10l-4 17H23zM46 54h10l-3 17H43zM65 54h10v17H65zM84 54h10l5 17H89z" fill="#F5F4F0"/>
+  <path d="M18 49h92v8H18z" rx="4" fill="#F5F4F0"/>
+  <path d="M26 23h76v33H26z" rx="8" fill="#F5F4F0"/>
+  <path d="M31 28h66v23H31z" rx="4" fill="#ffffff"/>
+  <path d="M33 75h16v25H33z" rx="2" fill="#1C1C1E"/>
+  <path d="M67 76h21v5H67z" fill="#D4820A"/>
+  <path d="M67 88h16v5H67z" fill="#D4820A"/>
+  <path d="M78.5 31.5a14 14 0 0 0-16.6 17.8L48.7 62.5a6 6 0 1 0 8.5 8.5l13.1-13.1a14 14 0 0 0 17.8-16.6l-8.8 8.8-8-2 1.9-8 5.3-8.6Z" fill="#1C1C1E"/>
+  <path d="M78.5 31.5a14 14 0 0 0-16.6 17.8L48.7 62.5a6 6 0 1 0 8.5 8.5l13.1-13.1a14 14 0 0 0 17.8-16.6l-8.8 8.8-8-2 1.9-8 5.3-8.6Z" fill="#D4820A" opacity="0.9"/>
+  <path d="M20 110h88v8H20z" rx="4" fill="#D4820A"/>
+  <path d="M23 61h82v49H23zM20 54h88l-8 17H28zM26 23h76v33H26zM20 110h88v8H20z" fill="none" stroke="#F5F4F0" stroke-width="4" stroke-linejoin="round"/>
+</svg>
