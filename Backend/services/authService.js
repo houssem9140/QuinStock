@@ -19,6 +19,23 @@ function resolveRole(role, adminCode) {
   return canCreateAdmin ? "admin" : "client";
 }
 
+function validatePassword(password) {
+  const isValid =
+    typeof password === "string" &&
+    password.length >= 8 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /\d/.test(password);
+
+  if (!isValid) {
+    const error = new Error(
+      "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
 async function registerUser(payload) {
   const {
     firstName,
@@ -39,6 +56,8 @@ async function registerUser(payload) {
     error.statusCode = 400;
     throw error;
   }
+
+  validatePassword(password);
 
   const normalizedEmail = email.toLowerCase().trim();
   const existingUser = await User.findOne({ email: normalizedEmail });

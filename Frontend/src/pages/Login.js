@@ -1,8 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import AuthContext from "../AuthContext";
 import { login } from "../api/authApi";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
+import PublicTopbar from "../components/PublicTopbar";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 function Login() {
   const [form, setForm] = useState({
@@ -11,6 +14,7 @@ function Login() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
@@ -50,26 +54,9 @@ function Login() {
 
   return (
     <main className="min-h-screen bg-surface text-on-surface">
-      <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-surface/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-4 md:px-16">
-          <Link to="/" className="flex items-center gap-3">
-            <span className="h-3 w-3 rounded-full bg-primary shadow-[0_0_24px_rgba(170,199,255,0.65)]" />
-            <span className="font-display text-3xl tracking-[0.12em] text-white md:text-4xl">
-              QUIN<span className="text-primary">STOCK</span>
-            </span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link to="/catalogue" className="hidden rounded border border-white/10 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-on-surface-variant transition hover:text-primary sm:block">
-              Catalogue
-            </Link>
-            <Link to="/register" className="rounded bg-primary px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-primary transition hover:bg-primary-container">
-              Signup
-            </Link>
-          </div>
-        </div>
-      </header>
+      <PublicTopbar />
 
-      <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-10 pt-28 md:px-16">
+      <section className="relative flex min-h-screen items-center overflow-hidden px-4 pb-10 pt-32 md:px-16">
         <div className="absolute inset-0">
           <img src={heroImage} alt="" className="h-full w-full object-cover opacity-35" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/70" />
@@ -84,13 +71,13 @@ function Login() {
               Connectez votre equipe a QuinStock.
             </h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-on-surface-variant">
-              Clients professionnels reviennent sur l'accueil public avec acces a leur espace. Les administrateurs sont envoyes vers le dashboard.
+              Commandez vos pieces, demandez un devis et organisez vos livraisons rapides partout en Tunisie.
             </p>
             <div className="mt-10 grid max-w-xl grid-cols-3 gap-4">
               {[
-                ["JWT", "Session securisee"],
-                ["B2B", "Catalogue pro"],
-                ["24H", "Devis rapide"],
+                ["24H", "Livraison rapide"],
+                ["TN", "Toute la Tunisie"],
+                ["B2B", "Devis pro"],
               ].map(([value, label]) => (
                 <div key={value} className="rounded border border-white/10 bg-surface-container/80 p-4">
                   <p className="font-mono text-2xl font-black text-white">{value}</p>
@@ -131,17 +118,27 @@ function Login() {
                 <label htmlFor="password" className="mb-2 block font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
                   Mot de passe
                 </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  className="block w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
-                  placeholder="Votre mot de passe"
-                  value={form.password}
-                  onChange={handleInputChange}
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    className="block w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 pr-12 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
+                    placeholder="Votre mot de passe"
+                    value={form.password}
+                    onChange={handleInputChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition hover:text-primary"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center justify-between gap-4 text-sm">

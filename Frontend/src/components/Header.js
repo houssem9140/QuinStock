@@ -32,6 +32,10 @@ export default function Header() {
   const location = useLocation();
   const currentUser = authContext.currentUser || {};
   const menuItems = authContext.isAdmin ? adminNavigation : clientNavigation;
+  const isActiveRoute = (href) =>
+    href === "/admin" || href === "/client"
+      ? location.pathname === href
+      : location.pathname.startsWith(href);
   const displayName =
     [currentUser.firstName, currentUser.lastName].filter(Boolean).join(" ") ||
     currentUser.companyName ||
@@ -56,7 +60,7 @@ export default function Header() {
 
             <nav className="hidden items-center gap-1 lg:flex">
               {menuItems.map((item) => {
-                const active = location.pathname === item.href;
+                const active = isActiveRoute(item.href);
                 return (
                   <Link
                     key={item.href}
@@ -64,7 +68,7 @@ export default function Header() {
                     className={classNames(
                       active
                         ? "border-primary bg-primary/10 text-primary"
-                        : "border-transparent text-on-surface-variant hover:border-white/10 hover:bg-surface-container hover:text-white",
+                        : "border-transparent text-on-surface-variant hover:border-primary hover:bg-primary hover:text-white",
                       "rounded border px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest transition"
                     )}
                   >
@@ -77,7 +81,7 @@ export default function Header() {
             <div className="hidden items-center gap-3 md:flex">
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition hover:border-primary/40 hover:text-primary"
+                className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white"
                 type="button"
                 title={t.language}
               >
@@ -86,21 +90,26 @@ export default function Header() {
               </button>
               <Link
                 to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
-                className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-primary transition hover:border-primary/40"
+                className="cart-link relative flex items-center gap-2 overflow-visible rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-primary transition hover:border-primary hover:bg-primary hover:text-white"
               >
-                <ShoppingCartIcon className="h-4 w-4" />
+                <ShoppingCartIcon key={`private-cart-icon-${cart.cartAnimationId}`} className="cart-bounce h-4 w-4" />
                 <span>{cart.cartCount}</span>
+                {cart.cartAnimationId > 0 && (
+                  <span key={cart.cartAnimationId} className="cart-fly-badge" aria-hidden="true">
+                    +1
+                  </span>
+                )}
               </Link>
               <button
                 type="button"
-                className="rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant transition hover:text-primary"
+                className="rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white"
               >
                 <span className="sr-only">Notifications</span>
                 <BellIcon className="h-5 w-5" aria-hidden="true" />
               </button>
 
               <Menu as="div" className="relative">
-                <Menu.Button className="flex items-center gap-3 rounded border border-white/10 bg-surface-container px-3 py-2 text-left transition hover:border-primary/40">
+                <Menu.Button className="flex items-center gap-3 rounded border border-white/10 bg-surface-container px-3 py-2 text-left transition hover:border-primary hover:bg-surface-container-high">
                   <span className="flex h-8 w-8 items-center justify-center rounded bg-primary text-xs font-black text-on-primary">
                     {displayName.slice(0, 1).toUpperCase()}
                   </span>
@@ -140,7 +149,7 @@ export default function Header() {
               </Menu>
             </div>
 
-            <Disclosure.Button className="inline-flex items-center justify-center rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant hover:text-primary md:hidden">
+            <Disclosure.Button className="inline-flex items-center justify-center rounded border border-white/10 bg-surface-container p-2 text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white md:hidden">
               <span className="sr-only">Menu</span>
               {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
             </Disclosure.Button>
@@ -148,20 +157,28 @@ export default function Header() {
 
           <Disclosure.Panel className="border-t border-white/10 bg-surface-container md:hidden">
             <div className="space-y-1 px-4 py-4">
-              {menuItems.map((item) => (
-                <Disclosure.Button
-                  key={item.href}
-                  as={Link}
-                  to={item.href}
-                  className="block rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant"
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
+              {menuItems.map((item) => {
+                const active = isActiveRoute(item.href);
+                return (
+                  <Disclosure.Button
+                    key={item.href}
+                    as={Link}
+                    to={item.href}
+                    className={classNames(
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-white/10 text-on-surface-variant hover:border-primary hover:bg-primary hover:text-white",
+                      "block rounded border px-4 py-3 text-sm font-bold transition"
+                    )}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                );
+              })}
               <Disclosure.Button
                 as="button"
                 onClick={toggleLanguage}
-                className="flex w-full items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant"
+                className="flex w-full items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white"
               >
                 <LanguageIcon className="h-5 w-5" />
                 {t.language}: {language.toUpperCase()}
@@ -169,10 +186,15 @@ export default function Header() {
               <Disclosure.Button
                 as={Link}
                 to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
-                className="flex items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-primary"
+                className="cart-link relative flex items-center gap-2 overflow-visible rounded border border-white/10 px-4 py-3 text-sm font-bold text-primary transition hover:border-primary hover:bg-primary hover:text-white"
               >
-                <ShoppingCartIcon className="h-5 w-5" />
+                <ShoppingCartIcon key={`mobile-cart-icon-${cart.cartAnimationId}`} className="cart-bounce h-5 w-5" />
                 Panier ({cart.cartCount})
+                {cart.cartAnimationId > 0 && (
+                  <span key={cart.cartAnimationId} className="cart-fly-badge" aria-hidden="true">
+                    +1
+                  </span>
+                )}
               </Disclosure.Button>
               <Disclosure.Button
                 as={Link}

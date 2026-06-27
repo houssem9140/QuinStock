@@ -1,6 +1,7 @@
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { API_BASE_URL } from "../api/client";
 
 export default function AddPurchaseDetails({
   addSaleModalSetting,
@@ -18,8 +19,6 @@ export default function AddPurchaseDetails({
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
 
-  console.log("PPu: ", purchase);
-
   // Handling Input Change for input fields
   const handleInputChange = (key, value) => {
     setPurchase({ ...purchase, [key]: value });
@@ -27,19 +26,19 @@ export default function AddPurchaseDetails({
 
   // POST Data
   const addSale = () => {
-    fetch("http://localhost:4000/api/purchase/add", {
+    fetch(`${API_BASE_URL}/purchase/add`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(purchase),
     })
-      .then((result) => {
+      .then(() => {
         alert("Purchase ADDED");
         handlePageUpdate();
         addSaleModalSetting();
       })
-      .catch((err) => console.log(err));
+      .catch(() => alert("Impossible d'ajouter l'achat."));
   };
 
   return (

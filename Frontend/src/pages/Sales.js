@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import AddSale from "../components/AddSale";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 function Sales() {
   const [showSaleModal, setShowSaleModal] = useState(false);
@@ -11,40 +12,40 @@ function Sales() {
 
   const authContext = useContext(AuthContext);
 
-  useEffect(() => {
-    fetchSalesData();
-    fetchProductsData();
-    fetchStoresData();
-  }, [updatePage]);
-
   // Fetching Data of All Sales
-  const fetchSalesData = () => {
-    fetch(`http://localhost:4000/api/sales/get/${authContext.user}`)
+  const fetchSalesData = useCallback(() => {
+    fetch(`${API_BASE_URL}/sales/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllSalesData(data);
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(() => setAllSalesData([]));
+  }, [authContext.user]);
 
   // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
+  const fetchProductsData = useCallback(() => {
+    fetch(`${API_BASE_URL}/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(() => setAllProducts([]));
+  }, [authContext.user]);
 
   // Fetching Data of All Stores
-  const fetchStoresData = () => {
-    fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
+  const fetchStoresData = useCallback(() => {
+    fetch(`${API_BASE_URL}/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);
       });
-  };
+  }, [authContext.user]);
+
+  useEffect(() => {
+    fetchSalesData();
+    fetchProductsData();
+    fetchStoresData();
+  }, [fetchProductsData, fetchSalesData, fetchStoresData, updatePage]);
 
   // Modal for Sale Add
   const addSaleModalSetting = () => {

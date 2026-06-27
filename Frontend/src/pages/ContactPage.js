@@ -7,7 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const contactLinks = [
   {
@@ -151,7 +152,7 @@ function ContactPage() {
               <iframe
                 title="Carte QuinStock Monastir Centre"
                 src={mapUrl}
-                className="h-full min-h-[360px] w-full grayscale invert-[0.88] contrast-125"
+                className="h-full min-h-[360px] w-full bg-white"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />

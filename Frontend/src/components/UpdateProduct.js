@@ -1,6 +1,7 @@
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { API_BASE_URL } from "../api/client";
 
 export default function UpdateProduct({
   updateProductData,
@@ -17,23 +18,22 @@ export default function UpdateProduct({
   const cancelButtonRef = useRef(null);
 
   const handleInputChange = (key, value) => {
-    console.log(key);
     setProduct({ ...product, [key]: value });
   };
 
   const updateProduct = () => {
-    fetch("http://localhost:4000/api/product/update", {
+    fetch(`${API_BASE_URL}/product/update`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(product),
     })
-      .then((result) => {
+      .then(() => {
         alert("Product Updated");
         setOpen(false);
       })
-      .catch((err) => console.log(err));
+      .catch(() => alert("Impossible de modifier le produit."));
   };
 
   return (

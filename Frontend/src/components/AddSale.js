@@ -1,6 +1,7 @@
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { API_BASE_URL } from "../api/client";
 
 export default function AddSale({
   addSaleModalSetting,
@@ -28,19 +29,19 @@ export default function AddSale({
 
   // POST Data
   const addSale = () => {
-    fetch("http://localhost:4000/api/sales/add", {
+    fetch(`${API_BASE_URL}/sales/add`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(sale),
     })
-      .then((result) => {
+      .then(() => {
         alert("Sale ADDED");
         handlePageUpdate();
         addSaleModalSetting();
       })
-      .catch((err) => console.log(err));
+      .catch(() => alert("Impossible d'ajouter la vente."));
   };
 
   return (

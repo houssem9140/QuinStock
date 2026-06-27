@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import AddStore from "../components/AddStore";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 function Store() {
   const [showModal, setShowModal] = useState(false);
@@ -8,18 +9,18 @@ function Store() {
 
   const authContext = useContext(AuthContext);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   // Fetching all stores data
-  const fetchData = () => {
-    fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
+  const fetchData = useCallback(() => {
+    fetch(`${API_BASE_URL}/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);
       });
-  };
+  }, [authContext.user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const modalSetting = () => {
     setShowModal(!showModal);

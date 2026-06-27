@@ -4,7 +4,6 @@ const Sales = require("../models/sales");
 
 // Add Post
 const addProduct = (req, res) => {
-  console.log("req: ", req.body.userId);
   const addProduct = new Product({
     userID: req.body.userId,
     name: req.body.name,
@@ -58,10 +57,8 @@ const updateSelectedProduct = async (req, res) => {
       },
       { new: true }
     );
-    console.log(updatedResult);
     res.json(updatedResult);
   } catch (error) {
-    console.log(error);
     res.status(402).send("Error");
   }
 };

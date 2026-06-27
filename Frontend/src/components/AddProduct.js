@@ -2,6 +2,7 @@ import { Fragment, useContext, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 export default function AddProduct({
   addProductModalSetting,
@@ -14,7 +15,6 @@ export default function AddProduct({
     manufacturer: "",
     description: "",
   });
-  console.log("----",product)
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
 
@@ -23,19 +23,19 @@ export default function AddProduct({
   };
 
   const addProduct = () => {
-    fetch("http://localhost:4000/api/product/add", {
+    fetch(`${API_BASE_URL}/product/add`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(product),
     })
-      .then((result) => {
+      .then(() => {
         alert("Product ADDED");
         handlePageUpdate();
         addProductModalSetting();
       })
-      .catch((err) => console.log(err));
+      .catch(() => alert("Impossible d'ajouter le produit."));
   };
 
   return (

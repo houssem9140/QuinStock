@@ -2,37 +2,134 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon-v10.ico" sizes="any" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon-v10.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#1C1C1E" />
     <meta
       name="description"
-      content="QuinStock : catalogue professionnel de quincaillerie, outillage, visserie, plomberie et demandes de devis."
+      content="QuinStock : catalogue professionnel de quincaillerie, demandes de devis et livraison rapide partout en Tunisie."
     />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="QuinStock" />
+    <meta name="application-name" content="QuinStock" />
+    <meta name="apple-mobile-web-app-title" content="QuinStock" />
+    <meta name="format-detection" content="telephone=yes" />
     <meta
       name="keywords"
-      content="quincaillerie pro, portail B2B, catalogue quincaillerie, demande de devis, outillage professionnel, visserie, plomberie, electricite"
+      content="quincaillerie pro, catalogue quincaillerie Tunisie, demande de devis, livraison quincaillerie, outillage professionnel, visserie, plomberie, electricite"
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://quinstock.vercel.app/" />
+    <meta property="og:site_name" content="QuinStock" />
     <meta property="og:title" content="QuinStock" />
     <meta
       property="og:description"
-      content="Catalogue et demandes de devis pour clients professionnels de quincaillerie."
+      content="Catalogue, devis professionnels et livraison rapide de pieces de quincaillerie en Tunisie."
     />
-    <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+    <meta property="og:image" content="%PUBLIC_URL%/logo512.png?v=10" />
+    <meta property="og:image:alt" content="QuinStock, quincaillerie professionnelle en Tunisie" />
     <meta property="og:locale" content="fr_FR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="QuinStock" />
     <meta
       name="twitter:description"
-      content="Catalogue, devis et dashboard admin pour une quincaillerie B2B."
+      content="Catalogue, devis professionnels et livraison rapide de pieces de quincaillerie en Tunisie."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="canonical" href="/" />
+    <meta name="twitter:image" content="%PUBLIC_URL%/logo512.png?v=10" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png?v=10" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json?v=10" />
+    <link rel="canonical" href="https://quinstock.vercel.app/" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "HardwareStore",
+            "@id": "https://quinstock.vercel.app/#store",
+            "name": "QuinStock",
+            "url": "https://quinstock.vercel.app/",
+            "image": "https://quinstock.vercel.app/logo512.png",
+            "description": "Catalogue professionnel de quincaillerie, demandes de devis PDF et livraison rapide partout en Tunisie.",
+            "telephone": "+21600000000",
+            "email": "contact@quinstock.test",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Avenue Habib Bourguiba",
+              "addressLocality": "Monastir",
+              "addressCountry": "TN"
+            },
+            "areaServed": {
+              "@type": "Country",
+              "name": "Tunisie"
+            },
+            "sameAs": [
+              "https://facebook.com/quinstock",
+              "https://instagram.com/quinstock",
+              "https://tiktok.com/@quinstock",
+              "https://linkedin.com/company/quinstock"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://quinstock.vercel.app/#website",
+            "name": "QuinStock",
+            "url": "https://quinstock.vercel.app/",
+            "publisher": {
+              "@id": "https://quinstock.vercel.app/#store"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://quinstock.vercel.app/catalogue?search={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "ItemList",
+            "@id": "https://quinstock.vercel.app/#categories",
+            "name": "Categories de quincaillerie professionnelle",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Fixation",
+                "url": "https://quinstock.vercel.app/catalogue?category=fixation"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Plomberie",
+                "url": "https://quinstock.vercel.app/catalogue?category=plomberie"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "Outillage",
+                "url": "https://quinstock.vercel.app/catalogue?category=outillage"
+              },
+              {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "Electricite",
+                "url": "https://quinstock.vercel.app/catalogue?category=electricite"
+              },
+              {
+                "@type": "ListItem",
+                "position": 5,
+                "name": "Peinture",
+                "url": "https://quinstock.vercel.app/catalogue?category=peinture"
+              },
+              {
+                "@type": "ListItem",
+                "position": 6,
+                "name": "Securite",
+                "url": "https://quinstock.vercel.app/catalogue?category=securite"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <title>QuinStock</title>
   </head>
   <body>

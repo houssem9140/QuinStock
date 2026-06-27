@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import AddPurchaseDetails from "../components/AddPurchaseDetails";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 function PurchaseDetails() {
   const [showPurchaseModal, setPurchaseModal] = useState(false);
@@ -10,30 +11,30 @@ function PurchaseDetails() {
 
   const authContext = useContext(AuthContext);
 
-  useEffect(() => {
-    fetchPurchaseData();
-    fetchProductsData();
-  }, [updatePage]);
-
   // Fetching Data of All Purchase items
-  const fetchPurchaseData = () => {
-    fetch(`http://localhost:4000/api/purchase/get/${authContext.user}`)
+  const fetchPurchaseData = useCallback(() => {
+    fetch(`${API_BASE_URL}/purchase/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllPurchaseData(data);
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(() => setAllPurchaseData([]));
+  }, [authContext.user]);
 
   // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
+  const fetchProductsData = useCallback(() => {
+    fetch(`${API_BASE_URL}/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(() => setAllProducts([]));
+  }, [authContext.user]);
+
+  useEffect(() => {
+    fetchPurchaseData();
+    fetchProductsData();
+  }, [fetchProductsData, fetchPurchaseData, updatePage]);
 
   // Modal for Sale Add
   const addSaleModalSetting = () => {
@@ -102,7 +103,7 @@ function PurchaseDetails() {
                       {element.QuantityPurchased}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {new Date(element.PurchaseDate).toLocaleDateString() ==
+                      {new Date(element.PurchaseDate).toLocaleDateString() ===
                       new Date().toLocaleDateString()
                         ? "Today"
                         : element.PurchaseDate}

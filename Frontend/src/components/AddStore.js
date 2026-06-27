@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import UploadImage from "./UploadImage";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 export default function AddStore() {
   const authContext = useContext(AuthContext);
@@ -23,18 +24,18 @@ export default function AddStore() {
   const cancelButtonRef = useRef(null);
 
   const addProduct = () => {
-    fetch("http://localhost:4000/api/store/add", {
+    fetch(`${API_BASE_URL}/store/add`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify(form),
     })
-      .then((result) => {
+      .then(() => {
         alert("STORE ADDED");
         setOpen(false);
       })
-      .catch((err) => console.log(err));
+      .catch(() => alert("Impossible d'ajouter le store."));
   };
 
   // Uploading image to cloudinary
@@ -52,7 +53,7 @@ export default function AddStore() {
         setForm({ ...form, image: data.url });
         alert("Store Image Successfully Uploaded");
       })
-      .catch((error) => console.log(error));
+      .catch(() => alert("Impossible d'envoyer l'image."));
   };
 
   return (

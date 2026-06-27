@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import AddProduct from "../components/AddProduct";
 import UpdateProduct from "../components/UpdateProduct";
 import AuthContext from "../AuthContext";
+import { API_BASE_URL } from "../api/client";
 
 function Inventory() {
   const [showProductModal, setShowProductModal] = useState(false);
@@ -13,43 +14,40 @@ function Inventory() {
   const [stores, setAllStores] = useState([]);
 
   const authContext = useContext(AuthContext);
-  console.log('====================================');
-  console.log(authContext);
-  console.log('====================================');
-
-  useEffect(() => {
-    fetchProductsData();
-    fetchSalesData();
-  }, [updatePage]);
 
   // Fetching Data of All Products
-  const fetchProductsData = () => {
-    fetch(`http://localhost:4000/api/product/get/${authContext.user}`)
+  const fetchProductsData = useCallback(() => {
+    fetch(`${API_BASE_URL}/product/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(() => setAllProducts([]));
+  }, [authContext.user]);
 
   // Fetching Data of Search Products
-  const fetchSearchData = () => {
-    fetch(`http://localhost:4000/api/product/search?searchTerm=${searchTerm}`)
+  const fetchSearchData = (term) => {
+    fetch(`${API_BASE_URL}/product/search?searchTerm=${term}`)
       .then((response) => response.json())
       .then((data) => {
         setAllProducts(data);
       })
-      .catch((err) => console.log(err));
+      .catch(() => setAllProducts([]));
   };
 
   // Fetching all stores data
-  const fetchSalesData = () => {
-    fetch(`http://localhost:4000/api/store/get/${authContext.user}`)
+  const fetchSalesData = useCallback(() => {
+    fetch(`${API_BASE_URL}/store/get/${authContext.user}`)
       .then((response) => response.json())
       .then((data) => {
         setAllStores(data);
       });
-  };
+  }, [authContext.user]);
+
+  useEffect(() => {
+    fetchProductsData();
+    fetchSalesData();
+  }, [fetchProductsData, fetchSalesData, updatePage]);
 
   // Modal for Product ADD
   const addProductModalSetting = () => {
@@ -58,7 +56,6 @@ function Inventory() {
 
   // Modal for Product UPDATE
   const updateProductModalSetting = (selectedProductData) => {
-    console.log("Clicked: edit");
     setUpdateProduct(selectedProductData);
     setShowUpdateModal(!showUpdateModal);
   };
@@ -66,9 +63,7 @@ function Inventory() {
 
   // Delete item
   const deleteItem = (id) => {
-    console.log("Product ID: ", id);
-    console.log(`http://localhost:4000/api/product/delete/${id}`);
-    fetch(`http://localhost:4000/api/product/delete/${id}`)
+    fetch(`${API_BASE_URL}/product/delete/${id}`)
       .then((response) => response.json())
       .then((data) => {
         setUpdatePage(!updatePage);
@@ -82,8 +77,9 @@ function Inventory() {
 
   // Handle Search Term
   const handleSearchTerm = (e) => {
-    setSearchTerm(e.target.value);
-    fetchSearchData();
+    const nextSearchTerm = e.target.value;
+    setSearchTerm(nextSearchTerm);
+    fetchSearchData(nextSearchTerm);
   };
 
   return (

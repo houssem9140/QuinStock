@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { LanguageIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import AuthContext from "../AuthContext";
 import CartContext from "../CartContext";
 import LanguageContext from "../LanguageContext";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
+import PublicTopbar from "../components/PublicTopbar";
 import { categories, getCategoryById, products } from "../data/catalogue";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+
+function useFallbackImage(event) {
+  event.currentTarget.onerror = null;
+  event.currentTarget.src = heroImage;
+}
 
 const tickerItems = [
   "Boulonnerie",
@@ -24,18 +31,18 @@ const tickerItems = [
 
 const stats = [
   { value: "15K+", label: "References produits" },
-  { value: "320+", label: "Fournisseurs actifs" },
+  { value: "24H", label: "Preparation express" },
   { value: "98%", label: "Taux de disponibilite" },
-  { value: "24H", label: "Delai de livraison" },
+  { value: "TN", label: "Livraison nationale" },
 ];
 
 const premiumProducts = products.slice(0, 4);
 
 const features = [
-  ["Gestion de stock en temps reel", "Suivez chaque entree et sortie. Alertes automatiques avant rupture et inventaire simplifie."],
-  ["Devis et PDF automatiques", "Generez des demandes de devis professionnelles, pretes pour validation et traitement admin."],
-  ["Gestion fournisseurs", "Centralisez les fournisseurs, comparez les prix et gardez une vision claire des approvisionnements."],
-  ["Dashboard KPI complet", "Commandes, clients, stock et performance visibles en un coup d'oeil pour l'administrateur."],
+  ["Livraison rapide toute la Tunisie", "Preparez vos commandes pro et recevez vos pieces chantier avec un suivi clair de la demande."],
+  ["Devis pro en quelques clics", "Ajoutez les articles au panier, envoyez la demande et recuperez un devis propre pour validation."],
+  ["Stock visible par piece", "Chaque produit affiche sa disponibilite pour connecter le portail a votre outil de gestion de stock."],
+  ["Suivi client centralise", "Clients, devis, commandes et historique d'achat restent lisibles depuis un espace simple et rapide."],
 ];
 
 function formatPrice(price) {
@@ -48,9 +55,8 @@ function formatPrice(price) {
 function Home() {
   const auth = useContext(AuthContext);
   const cart = useContext(CartContext);
-  const { language, t, toggleLanguage } = useContext(LanguageContext);
+  const { t } = useContext(LanguageContext);
   const accountLink = auth.isAdmin ? "/admin" : "/client";
-  const accountLabel = auth.isAdmin ? t.adminDashboard : t.clientSpace;
   const isLoggedIn = auth.isAdmin || auth.isClient;
 
   useEffect(() => {
@@ -61,50 +67,7 @@ function Home() {
 
   return (
     <main className="min-h-screen bg-surface text-on-surface selection:bg-primary/40 selection:text-white">
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-[96px] max-w-[1600px] items-center justify-between px-6 md:px-16">
-          <Link to="/" className="font-display text-4xl tracking-[0.12em] text-off-white">
-            QUIN<span className="text-primary">STOCK</span>
-          </Link>
-
-          <nav className="hidden items-center gap-10 lg:flex">
-            <Link to="/" className="text-sm font-bold uppercase tracking-[0.18em] text-off-white/65 hover:text-primary">{t.home}</Link>
-            <Link to="/catalogue" className="text-sm font-bold uppercase tracking-[0.18em] text-off-white/65 hover:text-primary">{t.catalogue}</Link>
-            <Link to="/cart" className="text-sm font-bold uppercase tracking-[0.18em] text-off-white/65 hover:text-primary">{t.orders}</Link>
-            <Link to="/contact" className="text-sm font-bold uppercase tracking-[0.18em] text-off-white/65 hover:text-primary">{t.contact}</Link>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 rounded border border-white/15 px-3 py-3 text-xs font-black uppercase tracking-widest text-off-white transition hover:border-primary hover:text-primary"
-              type="button"
-              title={t.language}
-            >
-              <LanguageIcon className="h-4 w-4" />
-              {language.toUpperCase()}
-            </button>
-            <Link to="/cart" className="hidden items-center gap-2 rounded border border-white/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-off-white hover:border-primary hover:text-primary sm:flex">
-              <ShoppingCartIcon className="h-4 w-4" />
-              {cart.cartCount}
-            </Link>
-            {isLoggedIn ? (
-              <Link to={accountLink} className="rounded bg-primary px-5 py-3 text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-container md:px-8">
-                {accountLabel}
-              </Link>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="rounded border border-white/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-off-white transition hover:border-primary hover:text-primary">
-                  Login
-                </Link>
-                <Link to="/register" className="rounded bg-primary px-4 py-3 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-container md:px-6">
-                  Signup
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <PublicTopbar />
 
       <section className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-[120px] md:px-16 md:pb-24">
         <div className="absolute inset-0">
@@ -170,6 +133,7 @@ function Home() {
                   alt={category.imageAlt}
                   title={category.seoTitle}
                   loading="lazy"
+                  onError={useFallbackImage}
                   className="absolute inset-0 h-full w-full object-cover opacity-55 transition duration-500 group-hover:scale-105 group-hover:opacity-70"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
@@ -207,10 +171,11 @@ function Home() {
               <article key={product.id} className="group bg-surface p-5 transition hover:bg-surface-container">
                 <Link to={`/product/${product.id}`} className="relative flex aspect-square items-center justify-center overflow-hidden rounded bg-surface-container-low">
                   <img
-                    src={getCategoryById(product.categoryId)?.imageUrl || heroImage}
+                    src={product.imageUrl || getCategoryById(product.categoryId)?.imageUrl || heroImage}
                     alt={`${product.name} - ${getCategoryById(product.categoryId)?.imageAlt || "produit quincaillerie professionnelle"}`}
                     title={`${product.name} | ${getCategoryById(product.categoryId)?.seoTitle || "QuinStock"}`}
                     loading="lazy"
+                    onError={useFallbackImage}
                     className="h-full w-full object-cover opacity-80 mix-blend-lighten transition duration-500 group-hover:scale-110"
                   />
                   <span className="absolute left-4 top-4 rounded bg-primary px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest text-white">
@@ -245,11 +210,11 @@ function Home() {
         </div>
       </section>
 
-      <section id="fournisseurs" className="bg-surface px-6 py-20 md:px-16 md:py-28">
+      <section id="livraison" className="bg-surface px-6 py-20 md:px-16 md:py-28">
         <div className="mx-auto max-w-[1500px]">
           <p className="text-xs font-black uppercase tracking-[0.24em] text-primary">Pourquoi QuinStock</p>
           <h2 className="mt-4 font-display text-6xl leading-none tracking-wide text-off-white md:text-8xl">
-            UN OUTIL CONCU<br />POUR LES PROS.
+            LIVRAISON ET DEVIS<br />POUR LES PROS.
           </h2>
           <div className="mt-14 grid gap-px bg-white/10 md:grid-cols-2">
             {features.map(([title, description], index) => (
@@ -271,7 +236,7 @@ function Home() {
         </h2>
         <div className="max-w-md">
           <p className="text-lg font-light leading-8 text-off-white/65">
-            Rejoignez les professionnels qui gerent leur quincaillerie avec QuinStock. Demo gratuite, sans engagement.
+            Commandes B2B, devis rapides et livraison organisee partout en Tunisie. Demo gratuite, sans engagement.
           </p>
           <Link to={isLoggedIn ? accountLink : "/register"} className="mt-8 inline-flex rounded bg-primary px-9 py-4 text-base font-black uppercase tracking-widest text-white">
             Demarrer gratuitement
@@ -283,11 +248,11 @@ function Home() {
         <div className="mx-auto flex max-w-[1500px] flex-col gap-10 border-b border-white/10 pb-10 md:flex-row md:justify-between">
           <div>
             <div className="font-display text-5xl tracking-[0.12em] text-off-white">QUIN<span className="text-primary">STOCK</span></div>
-            <p className="mt-2 text-sm text-steel">La gestion de stock pensee pour la quincaillerie.</p>
+            <p className="mt-2 text-sm text-steel">Commande, devis et livraison pour la quincaillerie professionnelle.</p>
           </div>
           <div className="grid gap-8 text-sm text-steel sm:grid-cols-3">
-            <div><h4 className="mb-4 text-xs font-black uppercase tracking-widest text-primary">Produit</h4><p>Catalogue</p><p>Gestion Stock</p><p>Commandes</p></div>
-            <div><h4 className="mb-4 text-xs font-black uppercase tracking-widest text-primary">Entreprise</h4><p>A propos</p><p>Contact</p><p>Support</p></div>
+            <div><h4 className="mb-4 text-xs font-black uppercase tracking-widest text-primary">Produit</h4><p>Catalogue</p><p>Stock par piece</p><p>Commandes</p></div>
+            <div><h4 className="mb-4 text-xs font-black uppercase tracking-widest text-primary">Livraison</h4><p>Toute la Tunisie</p><p>Suivi commande</p><p>Support</p></div>
             <div><h4 className="mb-4 text-xs font-black uppercase tracking-widest text-primary">Portail</h4><p>Clients</p><p>Admin</p><p>Devis</p></div>
           </div>
         </div>

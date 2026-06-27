@@ -2,8 +2,14 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import CartContext from "../CartContext";
 import PublicTopbar from "../components/PublicTopbar";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
 import { getCategoryById, products } from "../data/catalogue";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+
+function useFallbackImage(event) {
+  event.currentTarget.onerror = null;
+  event.currentTarget.src = heroImage;
+}
 
 function formatPrice(price) {
   return new Intl.NumberFormat("fr-FR", {
@@ -91,9 +97,10 @@ function ProductDetail() {
             <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-outline-variant bg-surface-container p-8">
               <div className="absolute inset-0 bg-[radial-gradient(#ffffff12_1px,transparent_1px)] [background-size:16px_16px]" />
               <img
-                src={category?.imageUrl || heroImage}
+                src={product.imageUrl || category?.imageUrl || heroImage}
                 alt={`${product.name} - ${category?.imageAlt || "produit quincaillerie professionnelle"}`}
                 title={`${product.name} | ${category?.seoTitle || "QuinStock"}`}
+                onError={useFallbackImage}
                 className="relative z-10 h-full w-full object-cover mix-blend-lighten"
               />
               <span className="absolute left-4 top-4 z-20 rounded border border-primary/20 bg-primary/10 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">

@@ -96,6 +96,27 @@ Le frontend tourne sur `http://localhost:3000` et l'API sur `http://localhost:40
 | `JWT_SECRET`                | Clé secrète pour les tokens JWT      |
 | `JWT_EXPIRES_IN`            | Durée de validité du token (ex: 7d)  |
 | `ADMIN_REGISTRATION_CODE`   | Code secret pour créer un admin      |
+| `SMTP_HOST`                 | Serveur SMTP pour envoyer les devis  |
+| `SMTP_PORT`                 | Port SMTP (`587` TLS, `465` SSL)     |
+| `SMTP_SECURE`               | `true` pour SSL, sinon `false`       |
+| `SMTP_USER`                 | Email/login SMTP                     |
+| `SMTP_PASS`                 | Mot de passe SMTP ou app password    |
+| `SMTP_FROM`                 | Expediteur des emails QuinStock      |
+| `QUOTE_NOTIFICATION_EMAIL`  | Email admin qui recoit les devis     |
+
+Exemple SMTP Gmail :
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=votre.email@gmail.com
+SMTP_PASS=votre-app-password-google
+SMTP_FROM=QuinStock <votre.email@gmail.com>
+QUOTE_NOTIFICATION_EMAIL=votre.email@gmail.com
+```
+
+Important : pour Gmail, utilisez un App Password Google, pas le mot de passe normal du compte.
 
 ---
 
@@ -107,6 +128,12 @@ Le frontend tourne sur `http://localhost:3000` et l'API sur `http://localhost:40
 | POST    | `/api/auth/register` | Inscription              |
 | POST    | `/api/auth/login`    | Connexion                |
 | GET     | `/api/auth/me`       | Profil utilisateur (JWT) |
+
+### Devis
+| Méthode | Endpoint      | Description                                  |
+| ------- | ------------- | -------------------------------------------- |
+| POST    | `/api/quotes` | Crée un devis, génère le PDF et envoie email |
+| GET     | `/api/quotes` | Liste les devis du client connecté           |
 
 ### Produits
 | Méthode | Endpoint                  | Description              |

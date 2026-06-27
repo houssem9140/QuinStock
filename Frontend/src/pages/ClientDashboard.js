@@ -7,8 +7,9 @@ import {
 } from "@heroicons/react/24/outline";
 import AuthContext from "../AuthContext";
 import CartContext from "../CartContext";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
 import { categories } from "../data/catalogue";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const purchasePreview = [
   { id: "ACH-2401", date: "12/06/2026", label: "Fixation chantier", amount: "428,30 EUR" },

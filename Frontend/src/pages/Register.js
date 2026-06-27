@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { register } from "../api/authApi";
-import heroImage from "../assets/b2b/hardware-hero.jpg";
+import PublicTopbar from "../components/PublicTopbar";
+
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const initialForm = {
   firstName: "",
@@ -18,7 +21,16 @@ function Register() {
   const [form, setForm] = useState(initialForm);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+
+  const passwordRules = [
+    { label: "8 caracteres minimum", valid: form.password.length >= 8 },
+    { label: "1 lettre majuscule", valid: /[A-Z]/.test(form.password) },
+    { label: "1 lettre minuscule", valid: /[a-z]/.test(form.password) },
+    { label: "1 chiffre", valid: /\d/.test(form.password) },
+  ];
+  const isPasswordValid = passwordRules.every((rule) => rule.valid);
 
   useEffect(() => {
     document.title = "Signup | QuinStock";
@@ -31,6 +43,12 @@ function Register() {
   const registerUser = async (event) => {
     event.preventDefault();
     setError("");
+
+    if (!isPasswordValid) {
+      setError("Le mot de passe doit contenir au moins 8 caracteres, 1 majuscule, 1 minuscule et 1 chiffre.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -45,19 +63,9 @@ function Register() {
 
   return (
     <main className="min-h-screen bg-surface text-on-surface">
-      <header className="fixed top-0 z-50 w-full border-b border-white/10 bg-surface/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-4 md:px-16">
-          <Link to="/" className="flex items-center gap-3">
-            <span className="h-3 w-3 rounded-full bg-primary shadow-[0_0_24px_rgba(170,199,255,0.65)]" />
-            <span className="font-display text-3xl tracking-[0.12em] text-white md:text-4xl">QUIN<span className="text-primary">STOCK</span></span>
-          </Link>
-          <Link to="/login" className="rounded border border-white/10 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-primary">
-            Login
-          </Link>
-        </div>
-      </header>
+      <PublicTopbar />
 
-      <section className="relative min-h-screen overflow-hidden px-4 pb-12 pt-28 md:px-16">
+      <section className="relative min-h-screen overflow-hidden px-4 pb-12 pt-32 md:px-16">
         <div className="absolute inset-0">
           <img src={heroImage} alt="" className="h-full w-full object-cover opacity-25" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/80" />
@@ -72,7 +80,7 @@ function Register() {
               Creez votre compte professionnel.
             </h1>
             <p className="mt-6 max-w-lg text-base leading-8 text-on-surface-variant">
-              Votre compte donne acces au catalogue, au panier devis et au suivi des demandes clients.
+              Votre compte donne acces au catalogue, aux devis et aux commandes avec livraison rapide sur toute la Tunisie.
             </p>
           </div>
 
@@ -97,14 +105,35 @@ function Register() {
                   <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                     {label}
                   </label>
-                  <input
-                    name={name}
-                    type={type}
-                    required={required}
-                    value={form[name]}
-                    onChange={handleInputChange}
-                    className="w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
-                  />
+                  <div className={name === "password" ? "relative" : ""}>
+                    <input
+                      name={name}
+                      type={name === "password" ? (showPassword ? "text" : "password") : type}
+                      required={required}
+                      value={form[name]}
+                      onChange={handleInputChange}
+                      className={`w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary ${name === "password" ? "pr-12" : ""}`}
+                    />
+                    {name === "password" && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((visible) => !visible)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition hover:text-primary"
+                        aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                      >
+                        {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                      </button>
+                    )}
+                  </div>
+                  {name === "password" && (
+                    <div className="mt-3 grid gap-1">
+                      {passwordRules.map((rule) => (
+                        <p key={rule.label} className={`font-mono text-[10px] uppercase tracking-widest ${rule.valid ? "text-primary" : "text-on-surface-variant"}`}>
+                          {rule.valid ? "OK" : "--"} {rule.label}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
 

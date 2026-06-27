@@ -22,6 +22,8 @@ function CartPage() {
   const [companyName, setCompanyName] = useState(auth.currentUser?.companyName || "Client Demo");
   const [contactEmail, setContactEmail] = useState(auth.currentUser?.email || "client.demo@quincaillerie.test");
   const [successQuote, setSuccessQuote] = useState(null);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     document.title = "Panier | QuinStock";
@@ -38,11 +40,26 @@ function CartPage() {
     return `${start.toLocaleDateString("fr-FR")} - ${end.toLocaleDateString("fr-FR")}`;
   }, [shippingMethod]);
 
-  const submitQuote = (event) => {
+  const submitQuote = async (event) => {
     event.preventDefault();
     if (!cart.items.length) return;
-    const quote = cart.submitQuote({ companyName, contactEmail, shippingMethod });
-    setSuccessQuote(quote);
+
+    if (!auth.token) {
+      setSubmitError("Connectez-vous pour envoyer un devis reel avec PDF par email.");
+      return;
+    }
+
+    setSubmitError("");
+    setIsSubmitting(true);
+
+    try {
+      const quote = await cart.submitQuote({ companyName, contactEmail, shippingMethod });
+      setSuccessQuote(quote);
+    } catch (error) {
+      setSubmitError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (successQuote) {
@@ -55,8 +72,21 @@ function CartPage() {
           </div>
           <h1 className="text-3xl font-black text-white">Demande de devis envoyee</h1>
           <p className="mt-3 text-sm leading-7 text-on-surface-variant">
-            Reference {successQuote.id}. Votre demande a ete enregistree localement et sera visible dans Mes devis.
+            Reference {successQuote.id}. Votre demande a ete enregistree et sera visible dans Mes devis.
           </p>
+          {successQuote.warning === "SMTP_NOT_CONFIGURED" ? (
+            <p className="mt-4 rounded border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
+              SMTP pas encore configure: le PDF est genere cote serveur, mais l'email reel partira des que les variables SMTP seront remplies.
+            </p>
+          ) : successQuote.warning === "SMTP_SEND_FAILED" ? (
+            <p className="mt-4 rounded border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+              Le devis est enregistre, mais l'envoi email a echoue. Verifiez SMTP_USER et le mot de passe application SMTP.
+            </p>
+          ) : (
+            <p className="mt-4 rounded border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
+              Le PDF du devis a ete envoye par email.
+            </p>
+          )}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/client/devis" className="flex-1 rounded bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-on-primary">
               Mes devis
@@ -194,8 +224,17 @@ function CartPage() {
                     <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Email contact</label>
                     <input type="email" value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} required className="w-full rounded border border-outline-variant bg-surface-container-low px-3 py-3 text-sm text-white outline-none focus:border-primary" />
                   </div>
-                  <button className="w-full rounded bg-tertiary px-5 py-4 text-xs font-black uppercase tracking-widest text-on-tertiary transition hover:brightness-110" type="submit">
-                    Envoyer demande de devis
+                  {submitError && (
+                    <p className="rounded border border-error/30 bg-error/10 px-4 py-3 text-sm text-error">
+                      {submitError}
+                    </p>
+                  )}
+                  <button
+                    className="w-full rounded bg-tertiary px-5 py-4 text-xs font-black uppercase tracking-widest text-on-tertiary transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Envoi du devis..." : "Envoyer demande de devis"}
                   </button>
                 </div>
               </form>

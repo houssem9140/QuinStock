@@ -2,7 +2,6 @@ const Store = require("../models/store");
 
 // Add Store
 const addStore = async (req, res) => {
-    console.log(req.body)
   const addStore = await new Store({
     userID : req.body.userId,
     name: req.body.name,

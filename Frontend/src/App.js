@@ -1,32 +1,45 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import ClientDashboard from "./pages/ClientDashboard";
-import ClientCatalogue from "./pages/ClientCatalogue";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Inventory from "./pages/Inventory";
-import NoPageFound from "./pages/NoPageFound";
 import AuthContext from "./AuthContext";
 import CartContext from "./CartContext";
 import LanguageContext, { translations } from "./LanguageContext";
 import ProtectedWrapper from "./ProtectedWrapper";
 import { useEffect, useState } from "react";
-import Store from "./pages/Store";
-import Sales from "./pages/Sales";
-import PurchaseDetails from "./pages/PurchaseDetails";
-import CartPage from "./pages/CartPage";
-import ProductDetail from "./pages/ProductDetail";
-import QuotesPage from "./pages/QuotesPage";
-import PurchaseHistory from "./pages/PurchaseHistory";
-import ContactPage from "./pages/ContactPage";
+import { createQuote } from "./api/quoteApi";
+
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Layout = lazy(() => import("./components/Layout"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
+const ClientCatalogue = lazy(() => import("./pages/ClientCatalogue"));
+const Inventory = lazy(() => import("./pages/Inventory"));
+const NoPageFound = lazy(() => import("./pages/NoPageFound"));
+const Store = lazy(() => import("./pages/Store"));
+const Sales = lazy(() => import("./pages/Sales"));
+const PurchaseDetails = lazy(() => import("./pages/PurchaseDetails"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const QuotesPage = lazy(() => import("./pages/QuotesPage"));
+const PurchaseHistory = lazy(() => import("./pages/PurchaseHistory"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+
+function PageLoader() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-surface text-on-surface">
+      <div className="rounded border border-white/10 bg-surface-container px-6 py-4 font-mono text-xs font-black uppercase tracking-widest text-primary">
+        Chargement
+      </div>
+    </div>
+  );
+}
 
 const App = () => {
   const [auth, setAuth] = useState(null);
   const [cartItems, setCartItems] = useState([]);
+  const [cartAnimationId, setCartAnimationId] = useState(0);
   const [quotes, setQuotes] = useState([]);
   const [language, setLanguage] = useState("fr");
   const [loader, setLoader] = useState(true);
@@ -91,6 +104,7 @@ const App = () => {
   const addItem = (product, quantity = 1) => {
     const safeQuantity = Math.max(1, Number(quantity) || 1);
     const existing = cartItems.find((item) => item.product.id === product.id);
+    setCartAnimationId(Date.now());
 
     if (existing) {
       persistCart(
@@ -123,21 +137,25 @@ const App = () => {
     persistCart([]);
   };
 
-  const submitQuote = ({ companyName, contactEmail, shippingMethod }) => {
+  const submitQuote = async ({ companyName, contactEmail, shippingMethod }) => {
     const subtotal = cartItems.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
-    const quote = {
-      id: `DV-${Date.now().toString().slice(-6)}`,
-      date: new Date().toISOString(),
+    const payload = {
       items: cartItems,
-      subtotal,
       shippingMethod,
       companyName,
       contactEmail,
-      status: "pending",
     };
+
+    const response = await createQuote(payload);
+    const quote = {
+      ...response.quote,
+      subtotal: response.quote?.subtotal ?? subtotal,
+      items: response.quote?.items || cartItems,
+    };
+
     persistQuotes([quote, ...quotes]);
     clearCart();
     return quote;
@@ -147,6 +165,7 @@ const App = () => {
     items: cartItems,
     quotes,
     cartCount: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    cartAnimationId,
     subtotal: cartItems.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
@@ -196,45 +215,47 @@ const App = () => {
       <CartContext.Provider value={cartValue}>
         <LanguageContext.Provider value={languageValue}>
           <BrowserRouter>
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/catalogue" element={<ClientCatalogue />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedWrapper roles={["admin"]}>
-                  <Layout />
-                </ProtectedWrapper>
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="inventory" element={<Inventory />} />
-              <Route path="purchase-details" element={<PurchaseDetails />} />
-              <Route path="sales" element={<Sales />} />
-              <Route path="manage-store" element={<Store />} />
-            </Route>
-            <Route
-              path="/client"
-              element={
-                <ProtectedWrapper roles={["client"]}>
-                  <Layout />
-                </ProtectedWrapper>
-              }
-            >
-              <Route index element={<ClientDashboard />} />
-              <Route path="catalogue" element={<ClientCatalogue />} />
-              <Route path="product/:productId" element={<ProductDetail />} />
-              <Route path="cart" element={<CartPage />} />
-              <Route path="devis" element={<QuotesPage />} />
-              <Route path="achats" element={<PurchaseHistory />} />
-            </Route>
-            <Route path="*" element={<NoPageFound />} />
-            </Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/catalogue" element={<ClientCatalogue />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/product/:productId" element={<ProductDetail />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedWrapper roles={["admin"]}>
+                      <Layout />
+                    </ProtectedWrapper>
+                  }
+                >
+                  <Route index element={<Dashboard />} />
+                  <Route path="inventory" element={<Inventory />} />
+                  <Route path="purchase-details" element={<PurchaseDetails />} />
+                  <Route path="sales" element={<Sales />} />
+                  <Route path="manage-store" element={<Store />} />
+                </Route>
+                <Route
+                  path="/client"
+                  element={
+                    <ProtectedWrapper roles={["client"]}>
+                      <Layout />
+                    </ProtectedWrapper>
+                  }
+                >
+                  <Route index element={<ClientDashboard />} />
+                  <Route path="catalogue" element={<ClientCatalogue />} />
+                  <Route path="product/:productId" element={<ProductDetail />} />
+                  <Route path="cart" element={<CartPage />} />
+                  <Route path="devis" element={<QuotesPage />} />
+                  <Route path="achats" element={<PurchaseHistory />} />
+                </Route>
+                <Route path="*" element={<NoPageFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </LanguageContext.Provider>
       </CartContext.Provider>
