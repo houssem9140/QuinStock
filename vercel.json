@@ -19,7 +19,20 @@
       "dest": "Backend/api/index.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/static/(.*)",
+      "dest": "Frontend/static/$1"
+    },
+    {
+      "src": "/products/(.*)",
+      "dest": "Frontend/products/$1"
+    },
+    {
+      "src": "/categories/(.*)",
+      "dest": "Frontend/categories/$1"
+    },
+    {
+      "src": "/(.*\\.(?:ico|svg|png|jpg|jpeg|webp|json|txt|xml|webmanifest))",
+      "dest": "Frontend/$1"
     },
     {
       "src": "/(.*)",
