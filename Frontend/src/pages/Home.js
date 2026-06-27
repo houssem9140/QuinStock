@@ -7,7 +7,7 @@ import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { categories, getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;
@@ -71,7 +71,15 @@ function Home() {
 
       <section className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-[120px] md:px-16 md:pb-24">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="Pieces de quincaillerie et boulonnerie" className="h-full w-full object-cover brightness-[0.40]" />
+          <img
+            src={heroImage}
+            alt="Pieces de quincaillerie et boulonnerie"
+            width="1600"
+            height="900"
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover brightness-[0.40]"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-surface/20 to-transparent" />
         </div>
@@ -132,7 +140,10 @@ function Home() {
                   src={category.imageUrl}
                   alt={category.imageAlt}
                   title={category.seoTitle}
+                  width="760"
+                  height="520"
                   loading="lazy"
+                  decoding="async"
                   onError={useFallbackImage}
                   className="absolute inset-0 h-full w-full object-cover opacity-55 transition duration-500 group-hover:scale-105 group-hover:opacity-70"
                 />
@@ -174,7 +185,10 @@ function Home() {
                     src={product.imageUrl || getCategoryById(product.categoryId)?.imageUrl || heroImage}
                     alt={`${product.name} - ${getCategoryById(product.categoryId)?.imageAlt || "produit quincaillerie professionnelle"}`}
                     title={`${product.name} | ${getCategoryById(product.categoryId)?.seoTitle || "QuinStock"}`}
+                    width="520"
+                    height="520"
                     loading="lazy"
+                    decoding="async"
                     onError={useFallbackImage}
                     className="h-full w-full object-cover opacity-80 mix-blend-lighten transition duration-500 group-hover:scale-110"
                   />

@@ -4,7 +4,7 @@ import CartContext from "../CartContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;
@@ -100,6 +100,10 @@ function ProductDetail() {
                 src={product.imageUrl || category?.imageUrl || heroImage}
                 alt={`${product.name} - ${category?.imageAlt || "produit quincaillerie professionnelle"}`}
                 title={`${product.name} | ${category?.seoTitle || "QuinStock"}`}
+                width="520"
+                height="520"
+                fetchPriority="high"
+                decoding="async"
                 onError={useFallbackImage}
                 className="relative z-10 h-full w-full object-cover mix-blend-lighten"
               />

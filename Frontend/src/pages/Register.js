@@ -6,7 +6,7 @@ import AuthContext from "../AuthContext";
 import { register } from "../api/authApi";
 import PublicTopbar from "../components/PublicTopbar";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 const initialForm = {
   firstName: "",
@@ -72,7 +72,7 @@ function Register() {
 
       <section className="relative min-h-screen overflow-hidden px-4 pb-12 pt-32 md:px-16">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover opacity-25" />
+          <img src={heroImage} alt="" width="1600" height="900" fetchPriority="high" decoding="async" className="h-full w-full object-cover opacity-25" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/80" />
         </div>
 

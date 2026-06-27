@@ -8,7 +8,7 @@ import {
 import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 const contactLinks = [
   {
@@ -62,7 +62,7 @@ function ContactPage() {
       <div className="mx-auto max-w-[1500px]">
         <section className="relative overflow-hidden rounded-xl border border-white/10 bg-surface-container-low p-8 md:p-12">
           <div className="absolute inset-0">
-            <img src={heroImage} alt="" className="h-full w-full object-cover opacity-25" />
+            <img src={heroImage} alt="" width="1600" height="900" decoding="async" className="h-full w-full object-cover opacity-25" />
             <div className="absolute inset-0 bg-gradient-to-r from-surface-container-low via-surface-container-low/90 to-surface-container-low/50" />
           </div>
           <div className="relative z-10 max-w-3xl">

@@ -123,8 +123,11 @@ function Inventory() {
                   <img
                     src={product.imageUrl}
                     alt={product.name}
+                    width="64"
+                    height="64"
                     className="h-16 w-16 rounded border border-white/10 object-cover"
                     loading="lazy"
+                    decoding="async"
                   />
                   <div>
                     <p className="text-sm font-black text-white">{product.name}</p>

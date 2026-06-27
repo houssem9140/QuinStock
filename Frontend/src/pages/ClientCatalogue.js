@@ -6,7 +6,7 @@ import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { categories, getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;
@@ -252,7 +252,10 @@ function ClientCatalogue() {
                     src={product.imageUrl || getCategoryById(product.categoryId)?.imageUrl || heroImage}
                     alt={`${product.name} - ${getCategoryById(product.categoryId)?.imageAlt || "produit quincaillerie professionnelle"}`}
                     title={`${product.name} | ${getCategoryById(product.categoryId)?.seoTitle || "QuinStock"}`}
+                    width="520"
+                    height="520"
                     loading="lazy"
+                    decoding="async"
                     onError={useFallbackImage}
                   />
                   <div className="absolute left-4 top-4 z-20 flex flex-col gap-1.5">

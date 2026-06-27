@@ -9,7 +9,7 @@ import AuthContext from "../AuthContext";
 import CartContext from "../CartContext";
 import { categories } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
 
 const purchasePreview = [
   { id: "ACH-2401", date: "12/06/2026", label: "Fixation chantier", amount: "428,30 EUR" },
@@ -41,7 +41,7 @@ function ClientDashboard() {
     <main className="col-span-12 bg-surface text-on-surface lg:col-span-10">
       <section className="relative flex min-h-[560px] items-end overflow-hidden px-4 pb-12 pt-10 md:px-8 md:pb-16">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="" className="h-full w-full object-cover brightness-[0.38]" />
+          <img src={heroImage} alt="" width="1600" height="900" decoding="async" className="h-full w-full object-cover brightness-[0.38]" />
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/55 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface/85 via-surface/35 to-transparent" />
         </div>
@@ -136,7 +136,10 @@ function ClientDashboard() {
                   src={category.imageUrl}
                   alt={category.imageAlt}
                   title={category.seoTitle}
+                  width="760"
+                  height="520"
                   loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover opacity-55 transition duration-500 group-hover:scale-105 group-hover:opacity-70"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
