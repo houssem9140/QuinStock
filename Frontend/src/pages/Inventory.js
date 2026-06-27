@@ -1,282 +1,153 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
-import AddProduct from "../components/AddProduct";
-import UpdateProduct from "../components/UpdateProduct";
-import AuthContext from "../AuthContext";
-import { API_BASE_URL } from "../api/client";
+import React, { useEffect, useMemo, useState } from "react";
+import { categories, getCategoryById, products } from "../data/catalogue";
 
 function Inventory() {
-  const [showProductModal, setShowProductModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [updateProduct, setUpdateProduct] = useState([]);
-  const [products, setAllProducts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState();
-  const [updatePage, setUpdatePage] = useState(true);
-  const [stores, setAllStores] = useState([]);
-
-  const authContext = useContext(AuthContext);
-
-  // Fetching Data of All Products
-  const fetchProductsData = useCallback(() => {
-    fetch(`${API_BASE_URL}/product/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllProducts(data);
-      })
-      .catch(() => setAllProducts([]));
-  }, [authContext.user]);
-
-  // Fetching Data of Search Products
-  const fetchSearchData = (term) => {
-    fetch(`${API_BASE_URL}/product/search?searchTerm=${term}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllProducts(data);
-      })
-      .catch(() => setAllProducts([]));
-  };
-
-  // Fetching all stores data
-  const fetchSalesData = useCallback(() => {
-    fetch(`${API_BASE_URL}/store/get/${authContext.user}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAllStores(data);
-      });
-  }, [authContext.user]);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
 
   useEffect(() => {
-    fetchProductsData();
-    fetchSalesData();
-  }, [fetchProductsData, fetchSalesData, updatePage]);
+    document.title = "Catalogue Admin | QuinStock";
+  }, []);
 
-  // Modal for Product ADD
-  const addProductModalSetting = () => {
-    setShowProductModal(!showProductModal);
-  };
+  const filteredProducts = useMemo(() => {
+    const term = search.toLowerCase().trim();
 
-  // Modal for Product UPDATE
-  const updateProductModalSetting = (selectedProductData) => {
-    setUpdateProduct(selectedProductData);
-    setShowUpdateModal(!showUpdateModal);
-  };
+    return products.filter((product) => {
+      const matchesCategory = category === "all" || product.categoryId === category;
+      const matchesSearch =
+        !term ||
+        product.name.toLowerCase().includes(term) ||
+        product.brand.toLowerCase().includes(term) ||
+        product.id.toLowerCase().includes(term);
 
+      return matchesCategory && matchesSearch;
+    });
+  }, [category, search]);
 
-  // Delete item
-  const deleteItem = (id) => {
-    fetch(`${API_BASE_URL}/product/delete/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUpdatePage(!updatePage);
-      });
-  };
+  const totalStock = products.reduce((sum, product) => sum + product.stock, 0);
+  const lowStock = products.filter((product) => product.stock < 35).length;
+  const stockValue = products.reduce((sum, product) => sum + product.stock * product.price, 0);
 
-  // Handle Page Update
-  const handlePageUpdate = () => {
-    setUpdatePage(!updatePage);
-  };
-
-  // Handle Search Term
-  const handleSearchTerm = (e) => {
-    const nextSearchTerm = e.target.value;
-    setSearchTerm(nextSearchTerm);
-    fetchSearchData(nextSearchTerm);
-  };
+  const stats = [
+    { label: "References", value: products.length, detail: `${categories.length} familles produit` },
+    { label: "Stock total", value: totalStock, detail: "Unites disponibles" },
+    { label: "Stock faible", value: lowStock, detail: "Articles a surveiller" },
+    { label: "Valeur stock", value: `${stockValue.toFixed(0)} EUR`, detail: "Estimation catalogue" },
+  ];
 
   return (
-    <div className="col-span-12 lg:col-span-10  flex justify-center">
-      <div className=" flex flex-col gap-5 w-11/12">
-        <div className="bg-white rounded p-3">
-          <span className="font-semibold px-4">Overall Inventory</span>
-          <div className=" flex flex-col md:flex-row justify-center items-center  ">
-            <div className="flex flex-col p-10  w-full  md:w-3/12  ">
-              <span className="font-semibold text-blue-600 text-base">
-                Total Products
-              </span>
-              <span className="font-semibold text-gray-600 text-base">
-                {products.length}
-              </span>
-              <span className="font-thin text-gray-400 text-xs">
-                Last 7 days
-              </span>
+    <main className="col-span-12 bg-surface px-4 py-8 text-on-surface md:px-8 lg:col-span-10">
+      <div className="mx-auto max-w-[1500px]">
+        <section className="rounded-xl border border-white/10 bg-surface-container p-6 md:p-8">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-primary">Catalogue Admin</p>
+          <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 className="font-display text-6xl leading-none tracking-wide text-off-white md:text-7xl">
+                STOCK<br /><span className="text-primary">PRODUITS</span>
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-on-surface-variant">
+                Controlez les references, les stocks disponibles et les familles catalogue visibles par les clients.
+              </p>
             </div>
-            <div className="flex flex-col gap-3 p-10   w-full  md:w-3/12 sm:border-y-2  md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-yellow-600 text-base">
-                Stores
-              </span>
-              <div className="flex gap-8">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    {stores.length}
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Last 7 days
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    $2000
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Revenue
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3 p-10  w-full  md:w-3/12  sm:border-y-2 md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-purple-600 text-base">
-                Top Selling
-              </span>
-              <div className="flex gap-8">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    5
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Last 7 days
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    $1500
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">Cost</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3 p-10  w-full  md:w-3/12  border-y-2  md:border-x-2 md:border-y-0">
-              <span className="font-semibold text-red-600 text-base">
-                Low Stocks
-              </span>
-              <div className="flex gap-8">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    12
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Ordered
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-gray-600 text-base">
-                    2
-                  </span>
-                  <span className="font-thin text-gray-400 text-xs">
-                    Not in Stock
-                  </span>
-                </div>
-              </div>
-            </div>
+            <button className="h-12 rounded border border-primary bg-primary px-6 text-xs font-black uppercase tracking-widest text-white transition hover:bg-primary-container">
+              Ajouter produit
+            </button>
           </div>
-        </div>
+        </section>
 
-        {showProductModal && (
-          <AddProduct
-            addProductModalSetting={addProductModalSetting}
-            handlePageUpdate={handlePageUpdate}
-          />
-        )}
-        {showUpdateModal && (
-          <UpdateProduct
-            updateProductData={updateProduct}
-            updateModalSetting={updateProductModalSetting}
-          />
-        )}
+        <section className="mt-6 grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 md:grid-cols-4">
+          {stats.map((stat) => (
+            <article key={stat.label} className="bg-surface-container p-5">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-steel">{stat.label}</p>
+              <p className="mt-3 font-display text-5xl leading-none text-primary">{stat.value}</p>
+              <p className="mt-2 text-sm text-on-surface-variant">{stat.detail}</p>
+            </article>
+          ))}
+        </section>
 
-        {/* Table  */}
-        <div className="overflow-x-auto rounded-lg border bg-white border-gray-200 ">
-          <div className="flex justify-between pt-5 pb-3 px-3">
-            <div className="flex gap-4 justify-center items-center ">
-              <span className="font-bold">Products</span>
-              <div className="flex justify-center items-center px-2 border-2 rounded-md ">
-                <img
-                  alt="search-icon"
-                  className="w-5 h-5"
-                  src={require("../assets/search-icon.png")}
-                />
-                <input
-                  className="border-none outline-none focus:border-none text-xs"
-                  type="text"
-                  placeholder="Search here"
-                  value={searchTerm}
-                  onChange={handleSearchTerm}
-                />
-              </div>
-            </div>
-            <div className="flex gap-4">
+        <section className="mt-6 rounded-xl border border-white/10 bg-surface-container p-4 md:p-5">
+          <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
+            <input
+              className="h-12 rounded border border-white/10 bg-surface-container-low px-4 font-mono text-sm text-white outline-none transition placeholder:text-on-surface-variant focus:border-primary"
+              placeholder="Rechercher par reference, marque, designation..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            <div className="flex gap-2 overflow-x-auto">
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 text-xs  rounded"
-                onClick={addProductModalSetting}
+                onClick={() => setCategory("all")}
+                className={`h-12 shrink-0 rounded border px-4 text-xs font-black uppercase tracking-widest transition ${
+                  category === "all"
+                    ? "border-primary bg-primary text-white"
+                    : "border-white/10 bg-surface-container-low text-on-surface-variant hover:border-primary hover:text-white"
+                }`}
               >
-                {/* <Link to="/inventory/add-product">Add Product</Link> */}
-                Add Product
+                Tous
               </button>
+              {categories.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setCategory(item.id)}
+                  className={`h-12 shrink-0 rounded border px-4 text-xs font-black uppercase tracking-widest transition ${
+                    category === item.id
+                      ? "border-primary bg-primary text-white"
+                      : "border-white/10 bg-surface-container-low text-on-surface-variant hover:border-primary hover:text-white"
+                  }`}
+                >
+                  {item.name}
+                </button>
+              ))}
             </div>
           </div>
-          <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
-            <thead>
-              <tr>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Products
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Manufacturer
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Stock
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Description
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  Availibility
-                </th>
-                <th className="whitespace-nowrap px-4 py-2 text-left font-medium text-gray-900">
-                  More
-                </th>
-              </tr>
-            </thead>
+        </section>
 
-            <tbody className="divide-y divide-gray-200">
-              {products.map((element, index) => {
-                return (
-                  <tr key={element._id}>
-                    <td className="whitespace-nowrap px-4 py-2  text-gray-900">
-                      {element.name}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.manufacturer}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.stock}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.description}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      {element.stock > 0 ? "In Stock" : "Not in Stock"}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                      <span
-                        className="text-green-700 cursor-pointer"
-                        onClick={() => updateProductModalSetting(element)}
-                      >
-                        Edit{" "}
-                      </span>
-                      <span
-                        className="text-red-600 px-2 cursor-pointer"
-                        onClick={() => deleteItem(element._id)}
-                      >
-                        Delete
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <section className="mt-6 overflow-hidden rounded-xl border border-white/10 bg-surface-container">
+          <div className="hidden grid-cols-[1.4fr_0.8fr_0.6fr_0.6fr_0.7fr_auto] gap-4 border-b border-white/10 px-5 py-4 text-xs font-black uppercase tracking-[0.2em] text-steel lg:grid">
+            <span>Produit</span>
+            <span>Famille</span>
+            <span>Marque</span>
+            <span>Stock</span>
+            <span>Prix</span>
+            <span>Statut</span>
+          </div>
+          {filteredProducts.map((product) => {
+            const productCategory = getCategoryById(product.categoryId);
+            const isLow = product.stock < 35;
+
+            return (
+              <article
+                key={product.id}
+                className="grid gap-4 border-b border-white/5 p-5 last:border-b-0 lg:grid-cols-[1.4fr_0.8fr_0.6fr_0.6fr_0.7fr_auto] lg:items-center"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="h-16 w-16 rounded border border-white/10 object-cover"
+                    loading="lazy"
+                  />
+                  <div>
+                    <p className="text-sm font-black text-white">{product.name}</p>
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-steel">#{product.id}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-on-surface-variant">{productCategory?.name}</p>
+                <p className="text-sm font-bold text-white">{product.brand}</p>
+                <p className="font-display text-4xl text-primary">{product.stock}</p>
+                <p className="font-mono text-sm font-bold text-white">{product.price.toFixed(2)} EUR</p>
+                <span className={`w-fit rounded border px-3 py-1 font-mono text-[10px] font-black uppercase tracking-widest ${
+                  isLow
+                    ? "border-primary/50 bg-primary/10 text-primary"
+                    : "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
+                }`}>
+                  {isLow ? "A recharger" : "En stock"}
+                </span>
+              </article>
+            );
+          })}
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
