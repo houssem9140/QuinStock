@@ -91,9 +91,9 @@ function Register() {
 
           <form onSubmit={registerUser} className="rounded-xl border border-white/10 bg-surface-container/95 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8">
             <div className="mb-8">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">Compte client pro</p>
+              <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">Compte client</p>
               <h2 className="mt-3 text-3xl font-black text-white">Inscription</h2>
-              <p className="mt-2 text-sm text-on-surface-variant">Tous les champs principaux sont necessaires pour preparer les devis.</p>
+              <p className="mt-2 text-sm text-on-surface-variant">Creez un compte B2B ou B2C. La societe et le matricule fiscal sont optionnels.</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -102,9 +102,9 @@ function Register() {
                 ["lastName", "Nom", "text", true],
                 ["email", "Email professionnel", "email", true],
                 ["password", "Mot de passe", "password", true],
-                ["companyName", "Societe", "text", true],
+                ["companyName", "Societe (optionnel)", "text", false],
                 ["phoneNumber", "Telephone", "tel", true],
-                ["taxId", "Matricule fiscal", "text", false],
+                ["taxId", "Matricule fiscal (optionnel)", "text", false],
               ].map(([name, label, type, required]) => (
                 <div key={name} className={name === "taxId" ? "md:col-span-2" : ""}>
                   <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
