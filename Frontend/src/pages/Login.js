@@ -108,7 +108,7 @@ function Login() {
                   autoComplete="email"
                   required
                   className="block w-full rounded border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-white outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary"
-                  placeholder="client.demo@quincaillerie.test"
+                  placeholder="contact@societe.com"
                   value={form.email}
                   onChange={handleInputChange}
                 />
@@ -168,12 +168,6 @@ function Login() {
                 {isSubmitting ? "Connexion..." : "Se connecter"}
               </button>
             </form>
-
-            <div className="mt-6 rounded border border-white/10 bg-surface-container-low p-4 font-mono text-[11px] text-on-surface-variant">
-              <p className="mb-2 font-bold uppercase tracking-widest text-primary">Compte demo client</p>
-              <p>client.demo@quincaillerie.test</p>
-              <p>client123</p>
-            </div>
 
             <p className="mt-6 text-center text-sm text-on-surface-variant">
               Nouveau client pro ?{" "}

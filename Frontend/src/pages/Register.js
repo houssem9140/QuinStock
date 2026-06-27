@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import AuthContext from "../AuthContext";
 import { register } from "../api/authApi";
 import PublicTopbar from "../components/PublicTopbar";
 
@@ -22,6 +24,7 @@ function Register() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const authContext = useContext(AuthContext);
   const navigate = useNavigate();
 
   const passwordRules = [
@@ -52,8 +55,10 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      await register({ ...form, role: "client" });
-      navigate("/login");
+      const authPayload = await register({ ...form, role: "client" });
+      authContext.signin(authPayload, () => {
+        navigate("/");
+      });
     } catch (err) {
       setError(err.message);
     } finally {

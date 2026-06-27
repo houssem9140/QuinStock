@@ -17,6 +17,14 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 app.use(cors());
 
+app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    mongoReadyState: mongoose.connection.readyState,
+    environment: process.env.VERCEL ? "vercel" : "node",
+  });
+});
+
 if (process.env.VERCEL) {
   let databasePromise;
   app.use(async (req, res, next) => {

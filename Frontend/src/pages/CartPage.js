@@ -19,8 +19,8 @@ function CartPage() {
   const isEmbeddedPortal =
     location.pathname.startsWith("/client") || location.pathname.startsWith("/admin");
   const [shippingMethod, setShippingMethod] = useState("standard");
-  const [companyName, setCompanyName] = useState(auth.currentUser?.companyName || "Client Demo");
-  const [contactEmail, setContactEmail] = useState(auth.currentUser?.email || "client.demo@quincaillerie.test");
+  const [companyName, setCompanyName] = useState(auth.currentUser?.companyName || "");
+  const [contactEmail, setContactEmail] = useState(auth.currentUser?.email || "");
   const [successQuote, setSuccessQuote] = useState(null);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
