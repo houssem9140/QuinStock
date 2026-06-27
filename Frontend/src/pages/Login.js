@@ -5,7 +5,7 @@ import AuthContext from "../AuthContext";
 import { login } from "../api/authApi";
 import PublicTopbar from "../components/PublicTopbar";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 function Login() {
   const [form, setForm] = useState({

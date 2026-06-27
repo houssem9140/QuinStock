@@ -6,7 +6,7 @@ import AuthContext from "../AuthContext";
 import { register } from "../api/authApi";
 import PublicTopbar from "../components/PublicTopbar";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const initialForm = {
   firstName: "",

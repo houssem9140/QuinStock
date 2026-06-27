@@ -9,7 +9,7 @@ import AuthContext from "../AuthContext";
 import CartContext from "../CartContext";
 import { categories } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const purchasePreview = [
   { id: "ACH-2401", date: "12/06/2026", label: "Fixation chantier", amount: "428,30 EUR" },

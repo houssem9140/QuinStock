@@ -8,7 +8,7 @@ import {
 import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 const contactLinks = [
   {

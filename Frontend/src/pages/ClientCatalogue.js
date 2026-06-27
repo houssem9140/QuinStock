@@ -6,7 +6,7 @@ import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { categories, getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;

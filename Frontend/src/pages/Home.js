@@ -7,7 +7,7 @@ import LanguageContext from "../LanguageContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { categories, getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;
@@ -69,7 +69,7 @@ function Home() {
     <main className="min-h-screen bg-surface text-on-surface selection:bg-primary/40 selection:text-white">
       <PublicTopbar />
 
-      <section className="relative flex min-h-screen items-end overflow-hidden px-6 pb-16 pt-[120px] md:px-16 md:pb-24">
+      <section className="relative flex min-h-[100svh] items-end overflow-hidden px-4 pb-10 pt-[104px] min-[380px]:px-5 sm:px-6 sm:pb-14 sm:pt-[120px] md:min-h-screen md:px-16 md:pb-24">
         <div className="absolute inset-0">
           <img
             src={heroImage}
@@ -84,23 +84,23 @@ function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-surface/20 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-[980px]">
-          <span className="mb-5 inline-block rounded-sm bg-primary px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-white">
+        <div className="relative z-10 w-full max-w-[980px]">
+          <span className="mb-4 inline-block max-w-full rounded-sm bg-primary px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white sm:mb-5 sm:px-4 sm:text-xs sm:tracking-[0.22em]">
             {t.professionalHardware}
           </span>
-          <h1 className="font-display text-[76px] leading-[0.9] tracking-[0.035em] text-off-white sm:text-[110px] lg:text-[150px]">
+          <h1 className="max-w-full break-words font-display text-[clamp(3.45rem,17vw,4.75rem)] leading-[0.9] tracking-[0.025em] text-off-white sm:text-[110px] sm:tracking-[0.035em] lg:text-[150px]">
             {t.heroTitle1}<br />
             {t.heroTitle2} <span className="text-primary">{t.heroTitleAccent}</span><br />
             {t.heroTitle3}
           </h1>
-          <p className="mt-8 max-w-xl text-xl font-light leading-9 text-off-white/75">
+          <p className="mt-5 max-w-xl text-base font-light leading-7 text-off-white/75 sm:mt-8 sm:text-xl sm:leading-9">
             {t.heroSubtitle}
           </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link to="/catalogue" className="rounded bg-primary px-9 py-4 text-center text-base font-black uppercase tracking-widest text-white transition hover:bg-primary-container">
+          <div className="mt-7 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4">
+            <Link to="/catalogue" className="rounded bg-primary px-6 py-3.5 text-center text-sm font-black uppercase tracking-widest text-white transition hover:bg-primary-container sm:px-9 sm:py-4 sm:text-base">
               {t.viewCatalogue}
             </Link>
-            <Link to="/cart" className="rounded border-2 border-off-white/30 px-9 py-4 text-center text-base font-black uppercase tracking-widest text-white transition hover:border-off-white">
+            <Link to="/cart" className="rounded border-2 border-off-white/30 px-6 py-3.5 text-center text-sm font-black uppercase tracking-widest text-white transition hover:border-off-white sm:px-9 sm:py-4 sm:text-base">
               {t.requestQuote}
             </Link>
           </div>

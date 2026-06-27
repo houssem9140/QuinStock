@@ -4,7 +4,7 @@ import CartContext from "../CartContext";
 import PublicTopbar from "../components/PublicTopbar";
 import { getCategoryById, products } from "../data/catalogue";
 
-const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.webp`;
+const heroImage = `${process.env.PUBLIC_URL}/hardware-hero.jpg`;
 
 function useFallbackImage(event) {
   event.currentTarget.onerror = null;
