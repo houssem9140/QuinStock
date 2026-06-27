@@ -58,6 +58,16 @@ app.use("/api/purchase", purchaseRoute);
 // Sales API
 app.use("/api/sales", salesRoute);
 
+app.use((error, req, res, next) => {
+  console.error("API error:", error.message);
+  res.status(error.statusCode || 500).json({
+    message:
+      error.statusCode && error.statusCode < 500
+        ? error.message
+        : "Erreur serveur. Verifiez MONGO_URI/JWT_SECRET dans les variables d'environnement.",
+  });
+});
+
 async function startServer() {
   try {
     await connectDatabase();
