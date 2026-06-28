@@ -248,7 +248,7 @@ function ClientCatalogue() {
                 <Link to={`/product/${product.id}`} className="relative flex aspect-square cursor-pointer items-center justify-center overflow-hidden bg-surface-container-low/50 p-8">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/25" />
                   <img
-                    className="relative z-10 h-full w-full object-cover mix-blend-lighten transition duration-500 group-hover:scale-110"
+                    className="relative z-10 h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     src={product.imageUrl || getCategoryById(product.categoryId)?.imageUrl || heroImage}
                     alt={`${product.name} - ${getCategoryById(product.categoryId)?.imageAlt || "produit quincaillerie professionnelle"}`}
                     title={`${product.name} | ${getCategoryById(product.categoryId)?.seoTitle || "QuinStock"}`}
@@ -309,6 +309,7 @@ function ClientCatalogue() {
                       className="rounded bg-surface-container-high p-2.5 text-primary transition hover:bg-primary hover:text-on-primary active:scale-90"
                       title="Ajouter au panier"
                       type="button"
+                      aria-label={`Ajouter ${product.name} au panier`}
                     >
                       +
                     </button>

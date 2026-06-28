@@ -42,7 +42,7 @@ export default function Header() {
     "Compte pro";
 
   return (
-    <Disclosure as="header" className="sticky top-0 z-50 border-b border-white/10 bg-surface/95 backdrop-blur-xl">
+    <Disclosure as="header" className="sticky top-0 z-50 border-b border-white/10 bg-surface/95 backdrop-blur-md">
       {({ open }) => (
         <>
           <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-4 md:px-8">
@@ -84,12 +84,14 @@ export default function Header() {
                 className="flex items-center gap-2 rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white"
                 type="button"
                 title={t.language}
+                aria-label={t.language}
               >
                 <LanguageIcon className="h-4 w-4" />
                 {language.toUpperCase()}
               </button>
               <Link
                 to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
+                aria-label={`Panier: ${cart.cartCount} article(s)`}
                 className="cart-link relative flex items-center gap-2 overflow-visible rounded border border-white/10 bg-surface-container px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-primary transition hover:border-primary hover:bg-primary hover:text-white"
               >
                 <ShoppingCartIcon key={`private-cart-icon-${cart.cartAnimationId}`} className="cart-bounce h-4 w-4" />
@@ -178,6 +180,7 @@ export default function Header() {
               <Disclosure.Button
                 as="button"
                 onClick={toggleLanguage}
+                aria-label={t.language}
                 className="flex w-full items-center gap-2 rounded border border-white/10 px-4 py-3 text-sm font-bold text-on-surface-variant transition hover:border-primary hover:bg-primary hover:text-white"
               >
                 <LanguageIcon className="h-5 w-5" />
@@ -186,6 +189,7 @@ export default function Header() {
               <Disclosure.Button
                 as={Link}
                 to={authContext.isAdmin ? "/admin/sales" : "/client/cart"}
+                aria-label={`Panier: ${cart.cartCount} article(s)`}
                 className="cart-link relative flex items-center gap-2 overflow-visible rounded border border-white/10 px-4 py-3 text-sm font-bold text-primary transition hover:border-primary hover:bg-primary hover:text-white"
               >
                 <ShoppingCartIcon key={`mobile-cart-icon-${cart.cartAnimationId}`} className="cart-bounce h-5 w-5" />

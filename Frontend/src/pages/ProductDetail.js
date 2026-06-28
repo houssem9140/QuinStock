@@ -105,7 +105,7 @@ function ProductDetail() {
                 fetchPriority="high"
                 decoding="async"
                 onError={useFallbackImage}
-                className="relative z-10 h-full w-full object-cover mix-blend-lighten"
+                className="relative z-10 h-full w-full object-cover"
               />
               <span className="absolute left-4 top-4 z-20 rounded border border-primary/20 bg-primary/10 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-primary">
                 {category?.name}
@@ -155,7 +155,7 @@ function ProductDetail() {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <button onClick={addToCart} className="rounded bg-primary px-6 py-4 text-xs font-black uppercase tracking-widest text-on-primary transition hover:bg-primary-container" type="button">
+                <button onClick={addToCart} className="rounded bg-primary px-6 py-4 text-xs font-black uppercase tracking-widest text-on-primary transition hover:bg-primary-container" type="button" aria-label={`Ajouter ${product.name} au panier`}>
                   Ajouter au panier
                 </button>
                 <Link to="/cart" className="rounded border border-tertiary px-6 py-4 text-center text-xs font-black uppercase tracking-widest text-tertiary transition hover:bg-tertiary/10">

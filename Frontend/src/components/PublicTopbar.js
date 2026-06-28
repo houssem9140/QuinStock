@@ -32,7 +32,7 @@ function PublicTopbar() {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-surface/95 backdrop-blur-md">
         <div className="mx-auto flex h-[84px] max-w-[1600px] items-center justify-between gap-3 px-3 sm:h-[96px] sm:px-6 md:px-16">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -70,11 +70,12 @@ function PublicTopbar() {
               className="hidden items-center gap-1.5 rounded border border-white/15 px-2.5 py-2.5 text-[11px] font-black uppercase tracking-widest text-off-white transition hover:border-primary hover:bg-primary hover:text-white min-[420px]:flex sm:gap-2 sm:px-3 sm:py-3 sm:text-xs"
               type="button"
               title={t.language}
+              aria-label={t.language}
             >
               <LanguageIcon className="h-4 w-4" />
               {language.toUpperCase()}
             </button>
-            <Link to="/cart" className={`cart-link relative flex items-center gap-1.5 overflow-visible rounded border px-2.5 py-2.5 text-[11px] font-black uppercase tracking-widest transition sm:gap-2 sm:px-4 sm:py-3 sm:text-xs ${
+            <Link to="/cart" aria-label={`Panier: ${cart.cartCount} article(s)`} className={`cart-link relative flex items-center gap-1.5 overflow-visible rounded border px-2.5 py-2.5 text-[11px] font-black uppercase tracking-widest transition sm:gap-2 sm:px-4 sm:py-3 sm:text-xs ${
               isActive("/cart")
                 ? "border-primary bg-primary text-white"
                 : "border-white/15 text-off-white hover:border-primary hover:bg-primary hover:text-white"
@@ -169,6 +170,7 @@ function PublicTopbar() {
               onClick={toggleLanguage}
               className="mb-3 flex w-full items-center justify-center gap-2 rounded border border-white/15 px-4 py-3 text-xs font-black uppercase tracking-widest text-off-white transition hover:border-primary hover:bg-primary hover:text-white"
               type="button"
+              aria-label={t.language}
             >
               <LanguageIcon className="h-4 w-4" />
               {language.toUpperCase()}

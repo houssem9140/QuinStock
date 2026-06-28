@@ -72,7 +72,7 @@ function Register() {
 
       <section className="relative min-h-screen overflow-hidden px-4 pb-12 pt-32 md:px-16">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="" width="1600" height="900" fetchPriority="high" decoding="async" className="h-full w-full object-cover opacity-25" />
+          <img src={heroImage} alt="" width="1600" height="900" loading="lazy" decoding="async" className="hidden h-full w-full object-cover opacity-25 lg:block" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/80" />
         </div>
 
@@ -89,7 +89,7 @@ function Register() {
             </p>
           </div>
 
-          <form onSubmit={registerUser} className="rounded-xl border border-white/10 bg-surface-container/95 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8">
+          <form onSubmit={registerUser} className="rounded-xl border border-white/10 bg-surface-container/95 p-6 shadow-2xl shadow-black/30 backdrop-blur-md md:p-8">
             <div className="mb-8">
               <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-primary">Compte client</p>
               <h2 className="mt-3 text-3xl font-black text-white">Inscription</h2>

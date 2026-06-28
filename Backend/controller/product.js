@@ -65,11 +65,18 @@ const updateSelectedProduct = async (req, res) => {
 
 // Search Products
 const searchProduct = async (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  const products = await Product.find({
-    name: { $regex: searchTerm, $options: "i" },
-  });
-  res.json(products);
+  try {
+    const rawSearchTerm = req.query.searchTerm ?? req.query.q ?? "";
+    const searchTerm = String(rawSearchTerm).trim();
+    const filter = searchTerm
+      ? { name: { $regex: searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), $options: "i" } }
+      : {};
+
+    const products = await Product.find(filter).sort({ _id: -1 }).limit(100);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Unable to search products" });
+  }
 };
 
 module.exports = {

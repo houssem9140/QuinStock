@@ -41,7 +41,7 @@ function ClientDashboard() {
     <main className="col-span-12 bg-surface text-on-surface lg:col-span-10">
       <section className="relative flex min-h-[560px] items-end overflow-hidden px-4 pb-12 pt-10 md:px-8 md:pb-16">
         <div className="absolute inset-0">
-          <img src={heroImage} alt="" width="1600" height="900" decoding="async" className="h-full w-full object-cover brightness-[0.38]" />
+          <img src={heroImage} alt="" width="1600" height="900" decoding="async" className="h-full w-full object-cover opacity-45" />
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/55 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface/85 via-surface/35 to-transparent" />
         </div>

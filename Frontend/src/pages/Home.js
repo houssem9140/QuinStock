@@ -78,7 +78,7 @@ function Home() {
             height="900"
             fetchPriority="high"
             decoding="async"
-            className="h-full w-full object-cover brightness-[0.40]"
+            className="h-full w-full object-cover opacity-45"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-surface/80 via-surface/20 to-transparent" />
@@ -190,7 +190,7 @@ function Home() {
                     loading="lazy"
                     decoding="async"
                     onError={useFallbackImage}
-                    className="h-full w-full object-cover opacity-80 mix-blend-lighten transition duration-500 group-hover:scale-110"
+                    className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-110"
                   />
                   <span className="absolute left-4 top-4 rounded bg-primary px-2 py-1 font-mono text-[10px] font-black uppercase tracking-widest text-white">
                     {product.brand}
@@ -213,6 +213,7 @@ function Home() {
                       className="flex h-11 w-11 items-center justify-center rounded border-2 border-primary text-primary transition hover:bg-primary hover:text-white"
                       type="button"
                       title="Ajouter au panier"
+                      aria-label={`Ajouter ${product.name} au panier`}
                     >
                       <ShoppingCartIcon className="h-5 w-5" />
                     </button>

@@ -1,5 +1,4 @@
 import React, { lazy, Suspense } from "react";
-import Home from "./pages/Home";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthContext from "./AuthContext";
@@ -9,6 +8,7 @@ import ProtectedWrapper from "./ProtectedWrapper";
 import { useEffect, useState } from "react";
 import { createQuote } from "./api/quoteApi";
 
+const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Layout = lazy(() => import("./components/Layout"));
